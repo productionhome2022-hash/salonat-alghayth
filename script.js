@@ -1,561 +1,235 @@
-const STORAGE_KEY = "ghayth-platform-data";
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لوحة إدارة صالونات الغيث</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-shell">
+      <aside class="admin-sidebar">
+        <div class="admin-brand">
+          <img src="assets/logo.svg" alt="شعار صالونات الغيث" />
+          <div>
+            <strong>صالونات الغيث</strong>
+            <span>لوحة الإدارة</span>
+          </div>
+        </div>
 
-const defaultData = {
-  siteName: "صالونات الغيث",
-  heroTitle: "تجربة فاخرة لتصميم المفروشات والديكور",
-  heroText:
-    "نُصنع لهجات أنيقة، لمساحات مميزة، وأعمال فنية تضفي على كل مساحة طابعًا خاصًا يجمع بين الراحة والهوية البصرية.",
-  logoUrl: "assets/logo.svg",
-  heroImage:
-    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
-  backgroundUrl:
-    "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1400&q=80",
-  featuredProducts: [
-    {
-      id: crypto.randomUUID(),
-      name: "أريكة لولو",
-      category: "أرائك فاخره",
-      price: "٣٬٨٠٠ ر.س",
-      description: "أريكة أنيقة بتفاصيل خشبية مميزة وتصميم كلاسيكي مع لمسة عصرية.",
-      image:
-        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      id: crypto.randomUUID(),
-      name: "مجموعة شرفة فاخرة",
-      category: "ديكور داخلي",
-      price: "٤٬٩٠٠ ر.س",
-      description: "جلسة خارجية مريحة مناسبة للمتاحف والفلل بتفاصيل مميزة.",
-      image:
-        "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      id: crypto.randomUUID(),
-      name: "طاولة مركزية بارتيل",
-      category: "أثاث متوسط",
-      price: "٢٬٤٠٠ ر.س",
-      description: "طاولة مركزية بإطارات معدنية أنيقة مع تشطيب فاخر يعكس ذوق المكان.",
-      image:
-        "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=900&q=80"
-    }
-  ],
-  gallery: [
-    {
-      id: crypto.randomUUID(),
-      title: "استوديو الريفان",
-      type: "ديكور داخلي",
-      description: "تصميم فاخر يجمع بين الألوان الدافئة والأقمشة ذات الجودة العالية.",
-      image:
-        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1000&q=80"
-    },
-    {
-      id: crypto.randomUUID(),
-      title: "جدار البارز",
-      type: "أعمال فنية",
-      description: "تجربة فنية للديكور الجدراني بأسلوب باهت مع لمسات ذهبية.",
-      image:
-        "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1000&q=80"
-    },
-    {
-      id: crypto.randomUUID(),
-      title: "قاعة الضيافة",
-      type: "تصميم تجميلي",
-      description: "تجهيزات ضيافة أنيقة تحمل إحساس الهدوء والراحة للمستخدم.",
-      image:
-        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1000&q=80"
-    }
-  ],
-  videos: [
-    {
-      id: crypto.randomUUID(),
-      title: "عرض فاخر للأجواء الداخلية",
-      description: "مقاطع سينمائية تعكس جودة التصاميم واللمسات الفاخرة.",
-      url: "https://videos.pexels.com/video-files/3195394/3195394-hd_1920_1080.mp4"
-    },
-    {
-      id: crypto.randomUUID(),
-      title: "مفروشات عصرية",
-      description: "عرض يبرز تفاصيل الأثاث والكراسي المصممة بتوازن فني متكامل.",
-      url: "https://videos.pexels.com/video-files/853889/853889-hd_1920_1080.mp4"
-    },
-    {
-      id: crypto.randomUUID(),
-      title: "أماكن الاستقبال",
-      description: "أجواء ضيافة مميزة تعطي إحساساً فاخرًا ومريحًا للزائر.",
-      url: "https://videos.pexels.com/video-files/2674395/2674395-hd_1920_1080.mp4"
-    }
-  ],
-  messages: [
-    {
-      id: crypto.randomUUID(),
-      sender: "admin",
-      text: "مرحباً! كيف يمكننا مساعدتك اليوم؟"
-    }
-  ]
-};
+        <nav class="admin-nav">
+          <a href="index.html">الصفحة الرئيسية</a>
+          <a href="#site-settings">إعدادات الموقع</a>
+          <a href="#products">المفروشات</a>
+          <a href="#gallery-manager">المعرض</a>
+          <a href="#videos-manager">الفيديوهات</a>
+          <a href="#backgrounds">الخلفيات</a>
+        </nav>
+      </aside>
 
-function loadData() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData));
-    return structuredClone(defaultData);
-  }
+      <main class="admin-main">
+        <section id="site-settings" class="panel">
+          <div class="panel-header">
+            <h2>إعدادات الموقع</h2>
+          </div>
 
-  try {
-    const parsed = JSON.parse(raw);
-    return {
-      ...structuredClone(defaultData),
-      ...parsed,
-      featuredProducts: parsed.featuredProducts || defaultData.featuredProducts,
-      gallery: parsed.gallery || defaultData.gallery,
-      videos: parsed.videos || defaultData.videos,
-      messages: parsed.messages || defaultData.messages
-    };
-  } catch (_error) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData));
-    return structuredClone(defaultData);
-  }
-}
+          <div class="form-grid two-col">
+            <label>
+              اسم الموقع
+              <input id="siteNameInput" type="text" placeholder="صالونات الغيث" />
+            </label>
+            <label>
+              الشعار
+              <input id="logoInput" type="file" accept="image/*" />
+            </label>
+          </div>
 
-function saveData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
+          <div class="form-grid two-col">
+            <label>
+              عنوان رئيسي
+              <input id="heroTitleInput" type="text" placeholder="تجربة فاخرة لتصميم المفروشات" />
+            </label>
+            <label>
+              نص فرعي
+              <textarea id="heroTextInput" rows="3" placeholder="اكتب نص العنوان الفرعي..."></textarea>
+            </label>
+          </div>
 
-function setFilePreview(input, target, placeholder = "") {
-  const file = input.files && input.files[0];
-  if (!file) {
-    if (placeholder) {
-      target.src = placeholder;
-    }
-    return;
-  }
+          <div class="form-grid two-col">
+            <label>
+              صورة الغلاف الرئيسي
+              <input id="heroImageInput" type="file" accept="image/*" />
+            </label>
+            <label>
+              صورة الخلفية العامة
+              <input id="backgroundInput" type="file" accept="image/*" />
+            </label>
+          </div>
 
-  const reader = new FileReader();
-  reader.onload = (event) => {
-    target.src = event.target.result;
-  };
-  reader.readAsDataURL(file);
-}
+          <div class="form-grid two-col">
+            <label>
+              اسم الصالة/الورشة
+              <input id="showroomNameInput" type="text" placeholder="صالونات الغيث" />
+            </label>
+            <label>
+              العنوان الكامل
+              <input id="showroomAddressInput" type="text" placeholder="الرياض - حي ..." />
+            </label>
+            <label>
+              رابط خريطة Google Maps
+              <input id="showroomMapInput" type="url" placeholder="https://maps.google.com/?q=..." />
+            </label>
+            <label>
+              رقم الهاتف
+              <input id="showroomPhoneInput" type="tel" placeholder="+966 5X XXX XXXX" />
+            </label>
+            <label>
+              واتساب
+              <input id="showroomWhatsAppInput" type="tel" placeholder="+966 5X XXX XXXX" />
+            </label>
+            <label>
+              البريد الإلكتروني
+              <input id="showroomEmailInput" type="email" placeholder="hello@ghaythsalon.com" />
+            </label>
+            <label>
+              أوقات العمل
+              <input id="showroomHoursInput" type="text" placeholder="من الأحد إلى الخميس 10:00 - 22:00" />
+            </label>
+            <label>
+              طريقة الوصول
+              <textarea id="showroomAccessInput" rows="3" placeholder="دور ثاني - مدخل جانبي - مواقف مجانية"></textarea>
+            </label>
+          </div>
 
-function renderFeaturedProducts() {
-  const root = document.getElementById("featured-products");
-  if (!root) return;
-
-  const { featuredProducts } = loadData();
-
-  root.innerHTML = featuredProducts
-    .map(
-      (product) => `
-        <article class="product-card reveal">
-          <img src="${product.image}" alt="${product.name}" />
-          <div class="content">
-            <div class="product-meta">
-              <strong>${product.name}</strong>
-              <span>${product.price}</span>
+          <div class="preview-box">
+            <div class="preview-card">
+              <img id="logoPreview" src="assets/logo.svg" alt="معاينة الشعار" />
             </div>
-            <h3>${product.category}</h3>
-            <p>${product.description}</p>
+            <div class="preview-card large">
+              <img id="heroPreview" src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80" alt="معاينة الغلاف" />
+            </div>
           </div>
-        </article>
-      `
-    )
-    .join("");
-}
 
-function renderGallery() {
-  const root = document.getElementById("gallery-items");
-  if (!root) return;
-
-  const { gallery } = loadData();
-
-  root.innerHTML = gallery
-    .map(
-      (item) => `
-        <article class="gallery-item reveal">
-          <img src="${item.image}" alt="${item.title}" />
-          <div class="content">
-            <h3>${item.title}</h3>
-            <p>${item.type}</p>
-            <p>${item.description}</p>
+          <div class="actions-row">
+            <button id="saveSiteSettingsBtn" class="btn btn-primary" type="button">حفظ إعدادات الموقع</button>
           </div>
-        </article>
-      `
-    )
-    .join("");
-}
+        </section>
 
-function renderVideos() {
-  const root = document.getElementById("video-items");
-  if (!root) return;
-
-  const { videos } = loadData();
-
-  root.innerHTML = videos
-    .map(
-      (video) => `
-        <article class="video-card reveal">
-          <video controls muted playsinline preload="metadata">
-            <source src="${video.url}" type="video/mp4" />
-            متصفحك لا يدعم تشغيل الفيديوهات.
-          </video>
-          <div class="content">
-            <h3>${video.title}</h3>
-            <p>${video.description}</p>
+        <section id="products" class="panel">
+          <div class="panel-header">
+            <h2>إضافة مفروشات</h2>
           </div>
-        </article>
-      `
-    )
-    .join("");
-}
 
-function applySiteSettings() {
-  const data = loadData();
-  const siteName = document.querySelector(".brand strong");
-  const footerText = document.querySelector(".site-footer p");
-  const heroTitle = document.querySelector(".hero-copy h1");
-  const heroLead = document.querySelector(".hero-copy .lead");
-  const heroBackground = document.querySelector(".cinematic-bg");
-  const logo = document.querySelector(".brand img");
-  const footerLogo = document.querySelector(".footer-logo");
+          <form id="productForm" class="form-grid two-col">
+            <label>
+              اسم المنتج
+              <input id="productName" type="text" required />
+            </label>
+            <label>
+              الفئة
+              <input id="productCategory" type="text" placeholder="أرائك، كنب، دعامات..." required />
+            </label>
+            <label>
+              السعر
+              <input id="productPrice" type="text" placeholder="2500" required />
+            </label>
+            <label>
+              صورة المنتج
+              <input id="productImage" type="file" accept="image/*" />
+            </label>
+            <label class="full-span">
+              الوصف
+              <textarea id="productDescription" rows="3" required></textarea>
+            </label>
+            <div class="actions-row full-span">
+              <button type="submit" class="btn btn-primary">إضافة المنتج</button>
+            </div>
+          </form>
 
-  if (siteName) siteName.textContent = data.siteName || "صالونات الغيث";
-  if (footerText) footerText.textContent = `${data.siteName || "صالونات الغيث"} للمفروشات والأعمال الفنية.`;
-  if (heroTitle) heroTitle.textContent = data.heroTitle || "تجربة فاخرة لتصميم المفروشات والديكور";
-  if (heroLead) heroLead.textContent = data.heroText || defaultData.heroText;
-  if (heroBackground) heroBackground.style.background = `url("${data.backgroundUrl || defaultData.backgroundUrl}") center/cover no-repeat`;
-  if (logo) logo.src = data.logoUrl || "assets/logo.svg";
-  if (footerLogo) footerLogo.src = data.logoUrl || "assets/logo.svg";
-  document.title = data.siteName || "صالونات الغيث";
-}
+          <div id="productList" class="admin-list"></div>
+        </section>
 
-function renderChatMessages() {
-  const panel = document.getElementById("chatMessages");
-  if (!panel) return;
-
-  const { messages } = loadData();
-  panel.innerHTML = messages
-    .map(
-      (msg) => `
-        <div class="chat-bubble ${msg.sender === "admin" ? "admin" : "user"}">
-          ${msg.text}
-        </div>
-      `
-    )
-    .join("");
-
-  panel.scrollTop = panel.scrollHeight;
-}
-
-function initChat() {
-  const toggle = document.getElementById("chatToggle");
-  const panel = document.getElementById("chatPanel");
-  const closeChat = document.getElementById("closeChat");
-  const form = document.getElementById("chatForm");
-  const input = document.getElementById("chatInput");
-
-  if (!toggle || !panel || !form || !input) return;
-
-  toggle.addEventListener("click", () => panel.classList.toggle("open"));
-  closeChat.addEventListener("click", () => panel.classList.remove("open"));
-
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const text = input.value.trim();
-    if (!text) return;
-
-    const data = loadData();
-    data.messages.push({ id: crypto.randomUUID(), sender: "user", text });
-    data.messages.push({
-      id: crypto.randomUUID(),
-      sender: "admin",
-      text: "تم استلام رسالتك، وسيتم التواصل مع الإدارة في أقرب وقت ممكن."
-    });
-    saveData(data);
-    renderChatMessages();
-    input.value = "";
-    panel.classList.add("open");
-  });
-
-  renderChatMessages();
-}
-
-function updateAdminList() {
-  const productRoot = document.getElementById("productList");
-  const galleryRoot = document.getElementById("galleryList");
-  const videoRoot = document.getElementById("videoList");
-  const backgroundGrid = document.getElementById("backgroundGrid");
-
-  if (!productRoot || !galleryRoot || !videoRoot || !backgroundGrid) return;
-
-  const data = loadData();
-
-  productRoot.innerHTML = data.featuredProducts
-    .map(
-      (item) => `
-        <div class="list-item">
-          <img src="${item.image}" alt="${item.name}" />
-          <div>
-            <h4>${item.name}</h4>
-            <p>${item.category} • ${item.price}</p>
-            <p>${item.description}</p>
+        <section id="gallery-manager" class="panel">
+          <div class="panel-header">
+            <h2>إدارة المعرض</h2>
           </div>
-          <button class="remove-btn" data-type="product" data-id="${item.id}">حذف</button>
-        </div>
-      `
-    )
-    .join("");
 
-  galleryRoot.innerHTML = data.gallery
-    .map(
-      (item) => `
-        <div class="list-item">
-          <img src="${item.image}" alt="${item.title}" />
-          <div>
-            <h4>${item.title}</h4>
-            <p>${item.type}</p>
-            <p>${item.description}</p>
+          <form id="galleryForm" class="form-grid two-col">
+            <label>
+              عنوان المشروع
+              <input id="galleryTitle" type="text" required />
+            </label>
+            <label>
+              التخصص
+              <input id="galleryType" type="text" placeholder="ديكور، استوديو، جدار فني" required />
+            </label>
+            <label>
+              صورة المعرض
+              <input id="galleryImage" type="file" accept="image/*" />
+            </label>
+            <label>
+              رابط صورة خارجي (اختياري)
+              <input id="galleryImageUrl" type="url" placeholder="https://..." />
+            </label>
+            <label class="full-span">
+              وصف المشروع
+              <textarea id="galleryDescription" rows="3" required></textarea>
+            </label>
+            <div class="actions-row full-span">
+              <button type="submit" class="btn btn-primary">إضافة إلى المعرض</button>
+            </div>
+          </form>
+
+          <div id="galleryList" class="admin-list"></div>
+        </section>
+
+        <section id="videos-manager" class="panel">
+          <div class="panel-header">
+            <h2>إدارة الفيديوهات</h2>
           </div>
-          <button class="remove-btn" data-type="gallery" data-id="${item.id}">حذف</button>
-        </div>
-      `
-    )
-    .join("");
 
-  videoRoot.innerHTML = data.videos
-    .map(
-      (item) => `
-        <div class="list-item">
-          <video controls muted playsinline width="110" height="110">
-            <source src="${item.url}" type="video/mp4" />
-          </video>
-          <div>
-            <h4>${item.title}</h4>
-            <p>${item.description}</p>
+          <form id="videoForm" class="form-grid two-col">
+            <label>
+              عنوان الفيديو
+              <input id="videoTitle" type="text" required />
+            </label>
+            <label>
+              رابط الفيديو
+              <input id="videoUrl" type="url" placeholder="https://...mp4" required />
+            </label>
+            <label class="full-span">
+              وصف الفيديو
+              <textarea id="videoDescription" rows="3" placeholder="وصف مختصر للفيديو"></textarea>
+            </label>
+            <div class="actions-row full-span">
+              <button type="submit" class="btn btn-primary">إضافة فيديو</button>
+            </div>
+          </form>
+
+          <div id="videoList" class="admin-list"></div>
+        </section>
+
+        <section id="backgrounds" class="panel">
+          <div class="panel-header">
+            <h2>الخلفيات المتاحة</h2>
           </div>
-          <button class="remove-btn" data-type="video" data-id="${item.id}">حذف</button>
-        </div>
-      `
-    )
-    .join("");
 
-  backgroundGrid.innerHTML = [
-    data.backgroundUrl || defaultData.backgroundUrl,
-    "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80",
-    "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80",
-    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80"
-  ]
-    .map(
-      (url, index) => `
-        <div class="background-item">
-          <img src="${url}" alt="خلفية ${index + 1}" />
-          <button type="button" data-bg="${url}">تثبيت كخلفية</button>
-        </div>
-      `
-    )
-    .join("");
+          <div class="background-grid" id="backgroundGrid"></div>
+        </section>
+      </main>
+    </div>
 
-  document.querySelectorAll(".remove-btn").forEach((button) => {
-    button.addEventListener("click", () => {
-      const { type, id } = button.dataset;
-      const data = loadData();
-      if (type === "product") data.featuredProducts = data.featuredProducts.filter((item) => item.id !== id);
-      if (type === "gallery") data.gallery = data.gallery.filter((item) => item.id !== id);
-      if (type === "video") data.videos = data.videos.filter((item) => item.id !== id);
-      saveData(data);
-      updateAdminList();
-      renderFeaturedProducts();
-      renderGallery();
-      renderVideos();
-      applySiteSettings();
-    });
-  });
+    <script src="script.js"></script>
+  </body>
+</html>
 
-  document.querySelectorAll("[data-bg]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const selected = button.dataset.bg;
-      const data = loadData();
-      data.backgroundUrl = selected;
-      saveData(data);
-      applySiteSettings();
-      updateAdminList();
-    });
-  });
-}
 
-function initAdminPage() {
-  const siteNameInput = document.getElementById("siteNameInput");
-  const heroTitleInput = document.getElementById("heroTitleInput");
-  const heroTextInput = document.getElementById("heroTextInput");
-  const logoInput = document.getElementById("logoInput");
-  const heroImageInput = document.getElementById("heroImageInput");
-  const backgroundInput = document.getElementById("backgroundInput");
-  const saveSiteSettingsBtn = document.getElementById("saveSiteSettingsBtn");
-  if (!siteNameInput || !saveSiteSettingsBtn) return;
-
-  const data = loadData();
-  siteNameInput.value = data.siteName || "صالونات الغيث";
-  heroTitleInput.value = data.heroTitle || defaultData.heroTitle;
-  heroTextInput.value = data.heroText || defaultData.heroText;
-
-  const logoPreview = document.getElementById("logoPreview");
-  const heroPreview = document.getElementById("heroPreview");
-  logoPreview.src = data.logoUrl || "assets/logo.svg";
-  heroPreview.src = data.heroImage || defaultData.heroImage;
-
-  logoInput.addEventListener("change", () => setFilePreview(logoInput, logoPreview));
-  heroImageInput.addEventListener("change", () => setFilePreview(heroImageInput, heroPreview));
-  backgroundInput.addEventListener("change", () => {
-    const input = backgroundInput;
-    const file = input.files && input.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const data = loadData();
-      data.backgroundUrl = event.target.result;
-      saveData(data);
-      updateAdminList();
-      applySiteSettings();
-    };
-    reader.readAsDataURL(file);
-  });
-
-  saveSiteSettingsBtn.addEventListener("click", () => {
-    const current = loadData();
-    current.siteName = siteNameInput.value || "صالونات الغيث";
-    current.heroTitle = heroTitleInput.value || defaultData.heroTitle;
-    current.heroText = heroTextInput.value || defaultData.heroText;
-
-    const logoPreviewSrc = logoPreview.src || "assets/logo.svg";
-    const heroPreviewSrc = heroPreview.src || defaultData.heroImage;
-    current.logoUrl = logoPreviewSrc;
-    current.heroImage = heroPreviewSrc;
-
-    saveData(current);
-    applySiteSettings();
-    updateAdminList();
-    alert("تم حفظ إعدادات الموقع بنجاح.");
-  });
-
-  const productForm = document.getElementById("productForm");
-  productForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const current = loadData();
-    const productName = document.getElementById("productName").value.trim();
-    const productCategory = document.getElementById("productCategory").value.trim();
-    const productPrice = document.getElementById("productPrice").value.trim();
-    const productDescription = document.getElementById("productDescription").value.trim();
-    const productImageInput = document.getElementById("productImage");
-
-    let imageUrl = "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80";
-    if (productImageInput.files && productImageInput.files[0]) {
-      const fileReader = new FileReader();
-      fileReader.onload = (result) => {
-        imageUrl = result.target.result;
-        pushProduct(current, productName, productCategory, productPrice, productDescription, imageUrl);
-      };
-      fileReader.readAsDataURL(productImageInput.files[0]);
-    } else {
-      pushProduct(current, productName, productCategory, productPrice, productDescription, imageUrl);
-    }
-  });
-
-  const galleryForm = document.getElementById("galleryForm");
-  galleryForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const current = loadData();
-    const title = document.getElementById("galleryTitle").value.trim();
-    const type = document.getElementById("galleryType").value.trim();
-    const description = document.getElementById("galleryDescription").value.trim();
-    const imageUrl = document.getElementById("galleryImageUrl").value.trim();
-    const imageInput = document.getElementById("galleryImage");
-
-    let finalImage = imageUrl || "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=900&q=80";
-    if (imageInput.files && imageInput.files[0]) {
-      const fileReader = new FileReader();
-      fileReader.onload = (result) => {
-        finalImage = result.target.result;
-        current.gallery.push({
-          id: crypto.randomUUID(),
-          title,
-          type,
-          description,
-          image: finalImage
-        });
-        saveData(current);
-        galleryForm.reset();
-        updateAdminList();
-        renderGallery();
-      };
-      fileReader.readAsDataURL(imageInput.files[0]);
-    } else {
-      current.gallery.push({
-        id: crypto.randomUUID(),
-        title,
-        type,
-        description,
-        image: finalImage
-      });
-      saveData(current);
-      galleryForm.reset();
-      updateAdminList();
-      renderGallery();
-    }
-  });
-
-  const videoForm = document.getElementById("videoForm");
-  videoForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const current = loadData();
-    const title = document.getElementById("videoTitle").value.trim();
-    const url = document.getElementById("videoUrl").value.trim();
-    const description = document.getElementById("videoDescription").value.trim();
-
-    if (!url) return;
-    current.videos.push({
-      id: crypto.randomUUID(),
-      title,
-      description,
-      url
-    });
-    saveData(current);
-    videoForm.reset();
-    updateAdminList();
-    renderVideos();
-  });
-
-  updateAdminList();
-}
-
-function pushProduct(current, productName, productCategory, productPrice, productDescription, imageUrl) {
-  current.featuredProducts.push({
-    id: crypto.randomUUID(),
-    name: productName,
-    category: productCategory,
-    price: productPrice,
-    description: productDescription,
-    image: imageUrl
-  });
-
-  saveData(current);
-  document.getElementById("productForm").reset();
-  updateAdminList();
-  renderFeaturedProducts();
-}
-
-function initPage() {
-  const body = document.body;
-  if (body.classList.contains("admin-body")) {
-    initAdminPage();
-  } else {
-    applySiteSettings();
-    renderFeaturedProducts();
-    renderGallery();
-    renderVideos();
-    initChat();
-  }
-}
-
-window.addEventListener("DOMContentLoaded", initPage);
 
 
 

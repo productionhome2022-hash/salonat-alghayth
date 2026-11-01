@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="صالونات الغيث | منصة احترافية لعرض المفروشات والأعمال الفنية والديكور الفاخر."
+    />
+    <title>صالونات الغيث | المنصة الاحترافية</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="container nav-wrap">
+          <a href="#top" class="brand" aria-label="الصفحة الرئيسية">
+            <img src="assets/logo.svg" alt="شعار صالونات الغيث" />
+            <div>
+              <strong>صالونات الغيث</strong>
+              <span>Luxury Interiors</span>
+            </div>
+          </a>
+
+          <nav class="main-nav" aria-label="التنقل الأساسي">
+            <a href="#about">من نحن</a>
+            <a href="#collections">المجموعات</a>
+            <a href="#gallery">المشاريع</a>
+            <a href="#videos">الفيديوهات</a>
+            <a href="#contact">تواصل</a>
+          </nav>
+
+          <div class="nav-actions">
+            <a class="btn btn-secondary" href="#contact">احجز استشارة</a>
+            <a class="btn btn-primary" href="admin.html">لوحة الإدارة</a>
+          </div>
+        </div>
+      </header>
+
+      <main id="top">
+        <section class="hero cinematic-bg" aria-label="مقدمة المنصة">
+          <div class="overlay"></div>
+          <div class="container hero-grid">
+            <div class="hero-copy reveal">
+              <p class="eyebrow">استوديو تصميم داخلي وفني</p>
+              <h1>تجربة فاخرة لتصميم المفروشات والديكور</h1>
+              <p class="lead">
+                نُصنع لهجات أنيقة، لمساحات مميزة، وأعمال فنية تضفي على كل مساحة
+                طابعًا خاصًا يجمع بين الراحة والهوية البصرية.
+              </p>
+
+              <div class="cta-row">
+                <a class="btn btn-primary" href="#collections">استعرض التصاميم</a>
+                <a class="btn btn-ghost" href="#gallery">مشاهدة المعارض</a>
+              </div>
+
+              <ul class="stats" aria-label="إحصاءات المنصة">
+                <li>
+                  <strong>1200+</strong>
+                  <span>قطعة مصممة</span>
+                </li>
+                <li>
+                  <strong>48</strong>
+                  <span>مشروع مُنجز</span>
+                </li>
+                <li>
+                  <strong>12</strong>
+                  <span>سنة خبرة</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="hero-card reveal">
+              <div class="hero-preview">
+                <div class="hero-preview-image"></div>
+                <div class="floating-tag tag-one">ديكور فاخر</div>
+                <div class="floating-tag tag-two">مفروشات متكاملة</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="about" class="section studio-intro">
+          <div class="container intro-grid">
+            <div class="section-heading reveal">
+              <p class="eyebrow">من نحن</p>
+              <h2>صناعة أجواء متكاملة تجمع بين الفن والراحة والهوية</h2>
+            </div>
+
+            <div class="intro-copy reveal">
+              <p>
+                صالونات الغيث هي منصة متخصصة في عرض المفروشات، أعمال الديكور
+                الداخلية، والأعمال الفنية المصممة بعناية لتناسب ذوق العملاء
+                الأصيل. نقدم تصاميم عصرية تجمع بين الفخامة، البساطة، والهوية
+                الثقافية، في مساحة تعرض أعمالنا بشكل احترافي وجذاب.
+              </p>
+              <p>
+                من خلال لوحة الإدارة، يمكن للنقطة الفنية والعلامة التجارية التحكم
+                في الصور، الفيديوهات، الخلفيات، والغلاف الخاص بالموقع مباشرة عبر
+                واجهة سهلة وواضحة، مع تجربة مستخدم أنيقة ومميزة.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="collections" class="section section-alt">
+          <div class="container">
+            <div class="section-header reveal">
+              <p class="eyebrow">المجموعات</p>
+              <h2>مفروشات ورموز فخامة</h2>
+            </div>
+            <div id="featured-products" class="card-grid" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section class="section feature-strip">
+          <div class="container feature-list reveal">
+            <article>
+              <span>01</span>
+              <h3>ديكور فاخر</h3>
+              <p>أجواء أنيقة تحمل طابعًا راقيًا ومميزًا في كل زاوية.</p>
+            </article>
+            <article>
+              <span>02</span>
+              <h3>تصميم واقعي</h3>
+              <p>عرض المشاريع بطريقة احترافية تتيح للمتصفح تجربة ملموسة.</p>
+            </article>
+            <article>
+              <span>03</span>
+              <h3>خدمة شخصية</h3>
+              <p>تواصل مباشر مع الإدارة وتوجيهات مخصصة حسب احتياجات العميل.</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="gallery" class="section">
+          <div class="container">
+            <div class="section-header reveal">
+              <p class="eyebrow">المعرض</p>
+              <h2>أعمالنا المميزة</h2>
+            </div>
+            <div id="gallery-items" class="gallery-grid" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section id="videos" class="section section-alt">
+          <div class="container">
+            <div class="section-header reveal">
+              <p class="eyebrow">معرض الفيديوهات</p>
+              <h2>تجربة عرض سينمائية</h2>
+            </div>
+            <div id="video-items" class="video-grid" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section class="section contact-cta" id="contact">
+          <div class="container cta-box reveal">
+            <div>
+              <p class="eyebrow">تواصل معنا</p>
+              <h2>دعنا نُنجز لك مساحة فاخرة تعكس اسمك وقيمتك</h2>
+            </div>
+            <div class="cta-actions">
+              <a class="btn btn-primary" href="mailto:hello@ghaythsalon.com">hello@ghaythsalon.com</a>
+              <a class="btn btn-secondary" href="tel:+966500000000">+966 50 000 0000</a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div class="container footer-wrap">
+          <div>
+            <img src="assets/logo.svg" alt="شعار صالونات الغيث" class="footer-logo" />
+            <p>صالونات الغيث للمفروشات والأعمال الفنية.</p>
+          </div>
+          <div class="footer-links">
+            <a href="#about">من نحن</a>
+            <a href="#collections">المجموعات</a>
+            <a href="#gallery">المعرض</a>
+            <a href="admin.html">الإدارة</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <button id="chatToggle" class="chat-toggle" aria-label="فتح الدردشة">💬</button>
+
+    <aside id="chatPanel" class="chat-panel" aria-label="دردشة مباشرة">
+      <div class="chat-header">
+        <div>
+          <strong>الدردشة المباشرة</strong>
+          <small>مساعدة سريعة</small>
+        </div>
+        <button id="closeChat" aria-label="إغلاق الدردشة">×</button>
+      </div>
+      <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
+      <form id="chatForm" class="chat-form">
+        <input id="chatInput" type="text" placeholder="اكتب رسالتك هنا..." required />
+        <button type="submit">إرسال</button>
+      </form>
+    </aside>
+
+    <script src="script.js"></script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

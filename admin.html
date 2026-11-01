@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لوحة إدارة صالونات الغيث</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-shell">
+      <aside class="admin-sidebar">
+        <div class="admin-brand">
+          <img src="assets/logo.svg" alt="شعار صالونات الغيث" />
+          <div>
+            <strong>صالونات الغيث</strong>
+            <span>لوحة الإدارة</span>
+          </div>
+        </div>
+
+        <nav class="admin-nav">
+          <a href="index.html">الصفحة الرئيسية</a>
+          <a href="#site-settings">إعدادات الموقع</a>
+          <a href="#products">المفروشات</a>
+          <a href="#gallery-manager">المعرض</a>
+          <a href="#videos-manager">الفيديوهات</a>
+          <a href="#backgrounds">الخلفيات</a>
+        </nav>
+      </aside>
+
+      <main class="admin-main">
+        <section id="site-settings" class="panel">
+          <div class="panel-header">
+            <h2>إعدادات الموقع</h2>
+          </div>
+
+          <div class="form-grid two-col">
+            <label>
+              اسم الموقع
+              <input id="siteNameInput" type="text" placeholder="صالونات الغيث" />
+            </label>
+            <label>
+              الشعار
+              <input id="logoInput" type="file" accept="image/*" />
+            </label>
+          </div>
+
+          <div class="form-grid two-col">
+            <label>
+              عنوان رئيسي
+              <input id="heroTitleInput" type="text" placeholder="تجربة فاخرة لتصميم المفروشات" />
+            </label>
+            <label>
+              نص فرعي
+              <textarea id="heroTextInput" rows="3" placeholder="اكتب نص العنوان الفرعي..."></textarea>
+            </label>
+          </div>
+
+          <div class="form-grid two-col">
+            <label>
+              صورة الغلاف الرئيسي
+              <input id="heroImageInput" type="file" accept="image/*" />
+            </label>
+            <label>
+              صورة الخلفية العامة
+              <input id="backgroundInput" type="file" accept="image/*" />
+            </label>
+          </div>
+
+          <div class="preview-box">
+            <div class="preview-card">
+              <img id="logoPreview" src="assets/logo.svg" alt="معاينة الشعار" />
+            </div>
+            <div class="preview-card large">
+              <img id="heroPreview" src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80" alt="معاينة الغلاف" />
+            </div>
+          </div>
+
+          <div class="actions-row">
+            <button id="saveSiteSettingsBtn" class="btn btn-primary" type="button">حفظ إعدادات الموقع</button>
+          </div>
+        </section>
+
+        <section id="products" class="panel">
+          <div class="panel-header">
+            <h2>إضافة مفروشات</h2>
+          </div>
+
+          <form id="productForm" class="form-grid two-col">
+            <label>
+              اسم المنتج
+              <input id="productName" type="text" required />
+            </label>
+            <label>
+              الفئة
+              <input id="productCategory" type="text" placeholder="أرائك، كنب، دعامات..." required />
+            </label>
+            <label>
+              السعر
+              <input id="productPrice" type="text" placeholder="2500" required />
+            </label>
+            <label>
+              صورة المنتج
+              <input id="productImage" type="file" accept="image/*" />
+            </label>
+            <label class="full-span">
+              الوصف
+              <textarea id="productDescription" rows="3" required></textarea>
+            </label>
+            <div class="actions-row full-span">
+              <button type="submit" class="btn btn-primary">إضافة المنتج</button>
+            </div>
+          </form>
+
+          <div id="productList" class="admin-list"></div>
+        </section>
+
+        <section id="gallery-manager" class="panel">
+          <div class="panel-header">
+            <h2>إدارة المعرض</h2>
+          </div>
+
+          <form id="galleryForm" class="form-grid two-col">
+            <label>
+              عنوان المشروع
+              <input id="galleryTitle" type="text" required />
+            </label>
+            <label>
+              التخصص
+              <input id="galleryType" type="text" placeholder="ديكور، استوديو، جدار فني" required />
+            </label>
+            <label>
+              صورة المعرض
+              <input id="galleryImage" type="file" accept="image/*" />
+            </label>
+            <label>
+              رابط صورة خارجي (اختياري)
+              <input id="galleryImageUrl" type="url" placeholder="https://..." />
+            </label>
+            <label class="full-span">
+              وصف المشروع
+              <textarea id="galleryDescription" rows="3" required></textarea>
+            </label>
+            <div class="actions-row full-span">
+              <button type="submit" class="btn btn-primary">إضافة إلى المعرض</button>
+            </div>
+          </form>
+
+          <div id="galleryList" class="admin-list"></div>
+        </section>
+
+        <section id="videos-manager" class="panel">
+          <div class="panel-header">
+            <h2>إدارة الفيديوهات</h2>
+          </div>
+
+          <form id="videoForm" class="form-grid two-col">
+            <label>
+              عنوان الفيديو
+              <input id="videoTitle" type="text" required />
+            </label>
+            <label>
+              رابط الفيديو
+              <input id="videoUrl" type="url" placeholder="https://...mp4" required />
+            </label>
+            <label class="full-span">
+              وصف الفيديو
+              <textarea id="videoDescription" rows="3" placeholder="وصف مختصر للفيديو"></textarea>
+            </label>
+            <div class="actions-row full-span">
+              <button type="submit" class="btn btn-primary">إضافة فيديو</button>
+            </div>
+          </form>
+
+          <div id="videoList" class="admin-list"></div>
+        </section>
+
+        <section id="backgrounds" class="panel">
+          <div class="panel-header">
+            <h2>الخلفيات المتاحة</h2>
+          </div>
+
+          <div class="background-grid" id="backgroundGrid"></div>
+        </div>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -208,32 +208,41 @@
             }
         ];
 
-        function loadProducts() {
-            db.ref('products').on('value', snapshot => {
-                const grid = document.getElementById('gallery-grid');
-                if (!grid) return;
-                const data = snapshot.val();
-                let products = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })) : defaultProducts;
-                
-                grid.innerHTML = '';
-                products.forEach(p => {
-                    grid.innerHTML += `
-                        <div class="glass-panel" style="overflow: hidden; padding: 0;">
-                            <img src="${p.mediaUrl}" style="width: 100%; height: 220px; object-fit: cover;">
-                            <div style="padding: 15px;">
-                                <span class="gold-text" style="font-size: 11px;">${p.category || ''}</span>
-                                <h3 style="font-family: 'Amiri'; font-size: 18px; margin: 5px 0; color: #fff;">${p.title}</h3>
-                                <p style="color: #aaa; font-size: 12px; margin-bottom: 10px;">${p.description || ''}</p>
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <span class="gold-text" style="font-weight: bold;">${p.price}</span>
-                                    <a href="#contact" class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;">طلب تفصيل</a>
-                                </div>
+        // دالة عرض المنتجات مباشرة لضمان عدم بقاء الصفحة فارغة
+        function renderProducts(products) {
+            const grid = document.getElementById('gallery-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            products.forEach(p => {
+                grid.innerHTML += `
+                    <div class="glass-panel" style="overflow: hidden; padding: 0;">
+                        <img src="${p.mediaUrl}" style="width: 100%; height: 220px; object-fit: cover;">
+                        <div style="padding: 15px;">
+                            <span class="gold-text" style="font-size: 11px;">${p.category || ''}</span>
+                            <h3 style="font-family: 'Amiri'; font-size: 18px; margin: 5px 0; color: #fff;">${p.title}</h3>
+                            <p style="color: #aaa; font-size: 12px; margin-bottom: 10px;">${p.description || ''}</p>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span class="gold-text" style="font-weight: bold;">${p.price}</span>
+                                <a href="#contact" class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;">طلب تفصيل</a>
                             </div>
                         </div>
-                    `;
-                });
+                    </div>
+                `;
+            });
+        }
+
+        // عرض المنتجات الافتراضية فوراً عند تحميل الصفحة
+        renderProducts(defaultProducts);
+
+        function loadProducts() {
+            db.ref('products').on('value', snapshot => {
+                const data = snapshot.val();
+                if (data) {
+                    const products = Object.keys(data).map(k => ({ id: k, ...data[k] }));
+                    renderProducts(products);
+                }
             }, err => {
-                console.log('Firebase load error:', err);
+                console.log('Using default products');
             });
         }
 
@@ -250,17 +259,9 @@
             });
         }
 
-        function openAdminLogin() {
-            document.getElementById('admin-login-modal').style.display = 'flex';
-        }
-
-        function closeAdminLogin() {
-            document.getElementById('admin-login-modal').style.display = 'none';
-        }
-
-        function closeAdminDashboard() {
-            document.getElementById('admin-dashboard-modal').style.display = 'none';
-        }
+        function openAdminLogin() { document.getElementById('admin-login-modal').style.display = 'flex'; }
+        function closeAdminLogin() { document.getElementById('admin-login-modal').style.display = 'none'; }
+        function closeAdminDashboard() { document.getElementById('admin-dashboard-modal').style.display = 'none'; }
 
         function switchTab(tab) {
             if (tab === 'products') {
@@ -284,8 +285,8 @@
             auth.signInWithEmailAndPassword(email, pass).then(() => {
                 closeAdminLogin();
                 document.getElementById('admin-dashboard-modal').style.display = 'flex';
-            }).catch(err => {
-                alert('خطأ في البيانات! تأكد من البريد وكلمة المرور الخاصين بالأدمن.');
+            }).catch(() => {
+                alert('خطأ في البيانات! تأكد من البريد وكلمة المرور.');
             });
         }
 

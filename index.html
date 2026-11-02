@@ -107,4 +107,120 @@
     <section id="gallery" style="padding: 40px 15px; max-width: 1200px; margin: 0 auto;">
         <div style="text-align: center; margin-bottom: 30px;">
             <span class="gold-text" style="font-size: 12px; letter-spacing: 2px;">الكتالوج الحصري</span>
-            <h2 class="gold-gradient
+            <h2 class="gold-gradient" style="font-family: 'Amiri'; font-size: 28px; margin-top: 5px;">معرض الصالونات والمفروشات</h2>
+            <div style="width: 60px; height: 2px; background: #d4af37; margin: 10px auto;"></div>
+        </div>
+        <div id="gallery-grid" class="grid"></div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" style="padding: 40px 15px; max-width: 600px; margin: 0 auto;">
+        <div class="glass-panel">
+            <h3 class="gold-text" style="font-family: 'Amiri'; font-size: 22px; margin-bottom: 15px; text-align: center;">نموذج الاستفسار وطلب الشراء</h3>
+            <form onsubmit="submitCustomerInquiry(event)">
+                <input type="text" id="inquiry-name" required placeholder="الاسم الكريم">
+                <input type="text" id="inquiry-phone" required placeholder="رقم الهاتف / واتساب">
+                <textarea id="inquiry-message" rows="4" required placeholder="تفاصيل الطلب..."></textarea>
+                <button type="submit" class="btn btn-gold" style="width: 100%;">إرسال الطلب</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Admin Login Modal -->
+    <div id="admin-login-modal" class="modal">
+        <div class="glass-panel" style="max-width: 380px; width: 100%; position: relative;">
+            <button type="button" onclick="closeAdminLogin()" style="position: absolute; top: 15px; left: 15px; background: none; border: none; color: #d4af37; font-size: 18px; cursor: pointer;"><i class="fas fa-times"></i></button>
+            <h3 class="gold-text" style="font-family: 'Amiri'; margin-bottom: 20px; text-align: center;">تسجيل دخول الأدمن</h3>
+            <form onsubmit="handleAdminLogin(event)">
+                <input type="email" id="admin-email" required placeholder="البريد الإلكتروني للأدمن">
+                <input type="password" id="admin-pass" required placeholder="كلمة المرور">
+                <button type="submit" class="btn btn-gold" style="width: 100%;">دخول</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard Modal -->
+    <div id="admin-dashboard-modal" class="modal">
+        <div class="glass-panel" style="max-width: 700px; width: 100%; margin: 20px auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 10px; margin-bottom: 15px;">
+                <h2 class="gold-text" style="font-family: 'Amiri'; font-size: 18px;">لوحة تحكم المنصة</h2>
+                <button type="button" onclick="closeAdminDashboard()" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px;">إغلاق</button>
+            </div>
+
+            <!-- Tabs -->
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <button type="button" onclick="switchTab('products')" id="tab-btn-products" class="tab-btn active">إضافة معروض</button>
+                <button type="button" onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn">إعدادات الموقع</button>
+            </div>
+
+            <!-- Tab 1: Products -->
+            <div id="tab-content-products">
+                <form onsubmit="addNewProduct(event)">
+                    <input type="text" id="p-title" required placeholder="عنوان المعروض">
+                    <select id="p-cat">
+                        <option value="صالونات ملكية">صالونات ملكية</option>
+                        <option value="مفروشات فاخرة">مفروشات فاخرة</option>
+                        <option value="ديكورات داخلية">ديكورات داخلية</option>
+                    </select>
+                    <input type="text" id="p-price" required placeholder="السعر ($)">
+                    <label style="font-size: 12px; color: #d4af37; display: block; margin-bottom: 5px;">اختر صورة أو فيديو من المعرض:</label>
+                    <input type="file" id="p-file" accept="image/*,video/*" required style="padding: 10px;">
+                    <textarea id="p-desc" placeholder="الوصف التفصيلي"></textarea>
+                    <button type="submit" class="btn btn-gold" style="width: 100%;" id="upload-btn">حفظ وإضافة</button>
+                </form>
+            </div>
+
+            <!-- Tab 2: Settings -->
+            <div id="tab-content-settings" style="display: none;">
+                <form onsubmit="saveSiteSettings(event)">
+                    <input type="text" id="set-phone" placeholder="رقم الهاتف الأساسي">
+                    <input type="text" id="set-loc" placeholder="العنوان / الفروع">
+                    <input type="url" id="set-fb" placeholder="رابط الفيسبوك">
+                    <input type="url" id="set-insta" placeholder="رابط الانستغرام">
+                    <input type="url" id="set-tiktok" placeholder="رابط التيك توك">
+                    <button type="submit" class="btn btn-gold" style="width: 100%;">تحديث الإعدادات</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // دوال التحكم بالواجهة والنوافذ بشكل آمن
+        function openAdminLogin() {
+            const m = document.getElementById('admin-login-modal');
+            if (m) m.style.display = 'flex';
+        }
+        function closeAdminLogin() {
+            const m = document.getElementById('admin-login-modal');
+            if (m) m.style.display = 'none';
+        }
+        function closeAdminDashboard() {
+            const m = document.getElementById('admin-dashboard-modal');
+            if (m) m.style.display = 'none';
+        }
+        function switchTab(tab) {
+            const pC = document.getElementById('tab-content-products');
+            const sC = document.getElementById('tab-content-settings');
+            const pB = document.getElementById('tab-btn-products');
+            const sB = document.getElementById('tab-btn-settings');
+            if (!pC || !sC || !pB || !sB) return;
+
+            if (tab === 'products') {
+                pC.style.display = 'block';
+                sC.style.display = 'none';
+                pB.classList.add('active');
+                sB.classList.remove('active');
+            } else {
+                pC.style.display = 'none';
+                sC.style.display = 'block';
+                sB.classList.add('active');
+                pB.classList.remove('active');
+            }
+        }
+
+        // إعدادات Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAQwUbMVlaygM5K0G6H8Gu3rjstoZkDO0I",
+            authDomain: "al-ghaith-487f3.firebaseapp.com",
+            databaseURL: "

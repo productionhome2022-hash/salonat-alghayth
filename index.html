@@ -32,7 +32,6 @@
         .gold-bg { background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%); color: #000; }
         .glass-panel {
             background: rgba(20, 20, 20, 0.95);
-            backdrop-filter: blur(12px);
             border: 1px solid rgba(212, 175, 55, 0.3);
             border-radius: 16px;
             padding: 24px;
@@ -42,28 +41,26 @@
             background: rgba(11, 11, 11, 0.95);
             border-bottom: 1px solid rgba(212, 175, 55, 0.3);
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 30px;
+            padding: 15px 20px;
         }
         .hero {
-            height: 80vh; background: url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1920') center/cover no-repeat;
-            display: flex; align-items: center; justify-content: center; text-align: center; position: relative;
+            padding: 60px 20px; text-align: center; position: relative;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1200') center/cover no-repeat;
         }
-        .hero::after { content: ''; position: absolute; inset: 0; background: rgba(11,11,11,0.7); }
-        .hero-content { position: relative; z-index: 2; max-width: 800px; padding: 20px; }
         .btn {
-            display: inline-block; padding: 12px 30px; border-radius: 6px; font-weight: bold; text-decoration: none; cursor: pointer; transition: 0.3s;
+            display: inline-block; padding: 12px 24px; border-radius: 6px; font-weight: bold; text-decoration: none; cursor: pointer; transition: 0.3s; font-family: 'Tajawal';
         }
-        .btn-gold { background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%); color: #000; }
+        .btn-gold { background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%); color: #000; border: none; }
         .btn-outline { border: 1px solid #d4af37; color: #d4af37; background: transparent; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; padding: 20px; }
         input, select, textarea {
             width: 100%; background: #000; border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 8px; padding: 12px; color: #fff; margin-bottom: 15px; font-family: 'Tajawal';
         }
         .modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; overflow-y: auto;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; overflow-y: auto;
         }
         .tab-btn {
-            padding: 10px 20px; border-radius: 8px; border: 1px solid rgba(212,175,55,0.4); background: #111; color: #d4af37; cursor: pointer; font-weight: bold; font-family: 'Tajawal';
+            padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(212,175,55,0.4); background: #111; color: #d4af37; cursor: pointer; font-weight: bold; font-family: 'Tajawal';
         }
         .tab-btn.active { background: #d4af37; color: #000; }
     </style>
@@ -71,9 +68,9 @@
 <body>
 
     <!-- Top Info Bar -->
-    <div style="background: #000; border-bottom: 1px solid rgba(212,175,55,0.2); padding: 8px 20px; font-size: 12px; display: flex; justify-content: space-between;">
-        <span id="top-loc-text" class="gold-text"><i class="fas fa-map-marker-alt"></i> الجزائر (العاصمة - وهران - تلمسان) | هاتف: <span id="top-phone-text">+213 555 000 000</span></span>
-        <div style="display: flex; gap: 15px;" id="top-social-bar">
+    <div style="background: #000; border-bottom: 1px solid rgba(212,175,55,0.2); padding: 8px 15px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <span class="gold-text"><i class="fas fa-map-marker-alt"></i> <span id="top-loc">الجزائر (العاصمة - وهران - تلمسان)</span> | هاتف: <span id="top-phone">+213 555 000 000</span></span>
+        <div style="display: flex; gap: 15px;">
             <a href="#" id="link-fb" class="gold-text" target="_blank"><i class="fab fa-facebook-f"></i></a>
             <a href="#" id="link-insta" class="gold-text" target="_blank"><i class="fab fa-instagram"></i></a>
             <a href="#" id="link-tiktok" class="gold-text" target="_blank"><i class="fab fa-tiktok"></i></a>
@@ -82,9 +79,270 @@
 
     <!-- Header -->
     <header>
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <div style="width: 50px; height: 50px; border-radius: 50%; border: 1px solid #d4af37; overflow: hidden;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 45px; height: 45px; border-radius: 50%; border: 1px solid #d4af37; overflow: hidden;">
                 <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=150" style="width:100%; height:100%; object-fit:cover;">
             </div>
             <div>
-                <h2 class="gold-gradient" style="font-family: 'Amiri'; font-size: 22
+                <h2 class="gold-gradient" style="font-family: 'Amiri'; font-size: 20px;">صالونات الغيث الملكي</h2>
+                <span style="font-size: 9px; color: #888; letter-spacing: 2px;">AL-GHAITH SALONS</span>
+            </div>
+        </div>
+        <button type="button" onclick="openAdminLogin()" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;"><i class="fas fa-lock"></i> لوحة التحكم</button>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <span style="border: 1px solid rgba(212,175,55,0.5); padding: 4px 12px; border-radius: 20px; font-size: 11px; color: #d4af37; background: rgba(0,0,0,0.6);">معارض الورشة الملكية في الجزائر</span>
+            <h1 class="gold-gradient" style="font-family: 'Amiri'; font-size: 32px; margin: 15px 0;">صالون الغيث الملكي للمفروشات والديكور</h1>
+            <p style="color: #ccc; margin-bottom: 25px; font-size: 14px; line-height: 1.6;">نصمم ونصنع أفخم الصالونات والمفروشات العالمية حسب الطلب وفق أعلى معايير الجودة والذوق الرفيع.</p>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <a href="#gallery" class="btn btn-gold">استكشف المعرض الملكي</a>
+                <a href="#contact" class="btn btn-outline">تواصل معنا</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" style="padding: 40px 15px; max-width: 1200px; margin: 0 auto;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <span class="gold-text" style="font-size: 12px; letter-spacing: 2px;">الكتالوج الحصري</span>
+            <h2 class="gold-gradient" style="font-family: 'Amiri'; font-size: 28px; margin-top: 5px;">معرض الصالونات والمفروشات</h2>
+            <div style="width: 60px; height: 2px; background: #d4af37; margin: 10px auto;"></div>
+        </div>
+        <div id="gallery-grid" class="grid"></div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" style="padding: 40px 15px; max-width: 600px; margin: 0 auto;">
+        <div class="glass-panel">
+            <h3 class="gold-text" style="font-family: 'Amiri'; font-size: 22px; margin-bottom: 15px; text-align: center;">نموذج الاستفسار وطلب الشراء</h3>
+            <form onsubmit="submitCustomerInquiry(event)">
+                <input type="text" id="inquiry-name" required placeholder="الاسم الكريم">
+                <input type="text" id="inquiry-phone" required placeholder="رقم الهاتف / واتساب">
+                <textarea id="inquiry-message" rows="4" required placeholder="تفاصيل الطلب..."></textarea>
+                <button type="submit" class="btn btn-gold" style="width: 100%;">إرسال الطلب</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Admin Login Modal -->
+    <div id="admin-login-modal" class="modal">
+        <div class="glass-panel" style="max-width: 380px; width: 100%; position: relative;">
+            <button type="button" onclick="closeAdminLogin()" style="position: absolute; top: 15px; left: 15px; background: none; border: none; color: #d4af37; font-size: 18px; cursor: pointer;"><i class="fas fa-times"></i></button>
+            <h3 class="gold-text" style="font-family: 'Amiri'; margin-bottom: 20px; text-align: center;">تسجيل دخول الأدمن</h3>
+            <form onsubmit="handleAdminLogin(event)">
+                <input type="email" id="admin-email" required placeholder="البريد الإلكتروني للأدمن">
+                <input type="password" id="admin-pass" required placeholder="كلمة المرور">
+                <button type="submit" class="btn btn-gold" style="width: 100%;">دخول</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard Modal -->
+    <div id="admin-dashboard-modal" class="modal">
+        <div class="glass-panel" style="max-width: 700px; width: 100%; margin: 20px auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 10px; margin-bottom: 15px;">
+                <h2 class="gold-text" style="font-family: 'Amiri'; font-size: 18px;">لوحة تحكم المنصة</h2>
+                <button type="button" onclick="closeAdminDashboard()" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px;">إغلاق</button>
+            </div>
+
+            <!-- Tabs -->
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <button type="button" onclick="switchTab('products')" id="tab-btn-products" class="tab-btn active">إضافة معروض</button>
+                <button type="button" onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn">إعدادات الموقع</button>
+            </div>
+
+            <!-- Tab 1: Products -->
+            <div id="tab-content-products">
+                <form onsubmit="addNewProduct(event)">
+                    <input type="text" id="p-title" required placeholder="عنوان المعروض">
+                    <select id="p-cat">
+                        <option value="صالونات ملكية">صالونات ملكية</option>
+                        <option value="مفروشات فاخرة">مفروشات فاخرة</option>
+                        <option value="ديكورات داخلية">ديكورات داخلية</option>
+                    </select>
+                    <input type="text" id="p-price" required placeholder="السعر ($)">
+                    <input type="file" id="p-file" accept="image/*" required style="padding: 10px;">
+                    <textarea id="p-desc" placeholder="الوصف التفصيلي"></textarea>
+                    <button type="submit" class="btn btn-gold" style="width: 100%;">حفظ وإضافة</button>
+                </form>
+            </div>
+
+            <!-- Tab 2: Settings -->
+            <div id="tab-content-settings" style="display: none;">
+                <form onsubmit="saveSiteSettings(event)">
+                    <input type="text" id="set-phone" placeholder="رقم الهاتف الأساسي">
+                    <input type="text" id="set-loc" placeholder="العنوان / الفروع">
+                    <input type="url" id="set-fb" placeholder="رابط الفيسبوك">
+                    <input type="url" id="set-insta" placeholder="رابط الانستغرام">
+                    <input type="url" id="set-tiktok" placeholder="رابط التيك توك">
+                    <button type="submit" class="btn btn-gold" style="width: 100%;">تحديث الإعدادات</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAQwUbMVlaygM5K0G6H8Gu3rjstoZkDO0I",
+            authDomain: "al-ghaith-487f3.firebaseapp.com",
+            databaseURL: "https://al-ghaith-487f3-default-rtdb.firebaseio.com",
+            projectId: "al-ghaith-487f3",
+            storageBucket: "al-ghaith-487f3.firebasestorage.app",
+            messagingSenderId: "425276776029",
+            appId: "1:425276776029:web:81d422d67d7ddc9316b7b4",
+            measurementId: "G-TDBEE9L84V"
+        };
+        
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const db = firebase.database();
+        const auth = firebase.auth();
+
+        const defaultProducts = [
+            {
+                id: '1', title: 'صالون الغيث الملكي المذهب الفاخر', category: 'صالونات ملكية', price: '$250',
+                mediaUrl: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=800',
+                description: 'تصميم ملكي فريد مطلي بماء الذهب عيار 24 مع أقمشة مخملية فاخرة.'
+            }
+        ];
+
+        function loadProducts() {
+            db.ref('products').on('value', snapshot => {
+                const grid = document.getElementById('gallery-grid');
+                if (!grid) return;
+                const data = snapshot.val();
+                let products = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })) : defaultProducts;
+                
+                grid.innerHTML = '';
+                products.forEach(p => {
+                    grid.innerHTML += `
+                        <div class="glass-panel" style="overflow: hidden; padding: 0;">
+                            <img src="${p.mediaUrl}" style="width: 100%; height: 220px; object-fit: cover;">
+                            <div style="padding: 15px;">
+                                <span class="gold-text" style="font-size: 11px;">${p.category || ''}</span>
+                                <h3 style="font-family: 'Amiri'; font-size: 18px; margin: 5px 0; color: #fff;">${p.title}</h3>
+                                <p style="color: #aaa; font-size: 12px; margin-bottom: 10px;">${p.description || ''}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span class="gold-text" style="font-weight: bold;">${p.price}</span>
+                                    <a href="#contact" class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;">طلب تفصيل</a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }, err => {
+                console.log('Firebase load error:', err);
+            });
+        }
+
+        function loadSettings() {
+            db.ref('settings').on('value', snapshot => {
+                const s = snapshot.val();
+                if (s) {
+                    if (s.phone && document.getElementById('top-phone')) document.getElementById('top-phone').innerText = s.phone;
+                    if (s.location && document.getElementById('top-loc')) document.getElementById('top-loc').innerText = s.location;
+                    if (s.fb && document.getElementById('link-fb')) document.getElementById('link-fb').href = s.fb;
+                    if (s.insta && document.getElementById('link-insta')) document.getElementById('link-insta').href = s.insta;
+                    if (s.tiktok && document.getElementById('link-tiktok')) document.getElementById('link-tiktok').href = s.tiktok;
+                }
+            });
+        }
+
+        function openAdminLogin() {
+            document.getElementById('admin-login-modal').style.display = 'flex';
+        }
+
+        function closeAdminLogin() {
+            document.getElementById('admin-login-modal').style.display = 'none';
+        }
+
+        function closeAdminDashboard() {
+            document.getElementById('admin-dashboard-modal').style.display = 'none';
+        }
+
+        function switchTab(tab) {
+            if (tab === 'products') {
+                document.getElementById('tab-content-products').style.display = 'block';
+                document.getElementById('tab-content-settings').style.display = 'none';
+                document.getElementById('tab-btn-products').classList.add('active');
+                document.getElementById('tab-btn-settings').classList.remove('active');
+            } else {
+                document.getElementById('tab-content-products').style.display = 'none';
+                document.getElementById('tab-content-settings').style.display = 'block';
+                document.getElementById('tab-btn-settings').classList.add('active');
+                document.getElementById('tab-btn-products').classList.remove('active');
+            }
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('admin-email').value;
+            const pass = document.getElementById('admin-pass').value;
+
+            auth.signInWithEmailAndPassword(email, pass).then(() => {
+                closeAdminLogin();
+                document.getElementById('admin-dashboard-modal').style.display = 'flex';
+            }).catch(err => {
+                alert('خطأ في البيانات! تأكد من البريد وكلمة المرور الخاصين بالأدمن.');
+            });
+        }
+
+        function addNewProduct(e) {
+            e.preventDefault();
+            const title = document.getElementById('p-title').value;
+            const category = document.getElementById('p-cat').value;
+            const price = document.getElementById('p-price').value;
+            const description = document.getElementById('p-desc').value;
+            const fileInput = document.getElementById('p-file');
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    db.ref('products').push({
+                        title, category, price, description, mediaUrl: evt.target.result
+                    }, () => {
+                        alert('تم إضافة المعروض بنجاح!');
+                        closeAdminDashboard();
+                    });
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+
+        function saveSiteSettings(e) {
+            e.preventDefault();
+            const phone = document.getElementById('set-phone').value;
+            const location = document.getElementById('set-loc').value;
+            const fb = document.getElementById('set-fb').value;
+            const insta = document.getElementById('set-insta').value;
+            const tiktok = document.getElementById('set-tiktok').value;
+
+            db.ref('settings').set({ phone, location, fb, insta, tiktok }, () => {
+                alert('تم تحديث إعدادات الموقع!');
+                closeAdminDashboard();
+            });
+        }
+
+        function submitCustomerInquiry(e) {
+            e.preventDefault();
+            const name = document.getElementById('inquiry-name').value;
+            const phone = document.getElementById('inquiry-phone').value;
+            const message = document.getElementById('inquiry-message').value;
+
+            db.ref('inquiries').push({ name, phone, message, date: new Date().toLocaleString() }, () => {
+                alert('تم إرسال طلبك بنجاح!');
+                document.getElementById('inquiry-name').value = '';
+                document.getElementById('inquiry-phone').value = '';
+                document.getElementById('inquiry-message').value = '';
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+            loadSettings();
+        });
+    </script>
+</body>
+</html>

@@ -73,10 +73,11 @@
     <!-- Top Info Bar -->
     <div style="background: #000; border-bottom: 1px solid rgba(212,175,55,0.2); padding: 8px 15px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
         <span class="gold-text"><i class="fas fa-map-marker-alt"></i> <span id="top-loc">الجزائر (العاصمة - وهران - تلمسان)</span> | هاتف: <span id="top-phone">+213 555 000 000</span></span>
-        <div style="display: flex; gap: 15px;">
-            <a href="#" id="link-fb" class="gold-text" target="_blank"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" id="link-insta" class="gold-text" target="_blank"><i class="fab fa-instagram"></i></a>
-            <a href="#" id="link-tiktok" class="gold-text" target="_blank"><i class="fab fa-tiktok"></i></a>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <a href="#" id="link-whatsapp" class="gold-text" target="_blank" style="display:none;"><i class="fab fa-whatsapp"></i></a>
+            <a href="#" id="link-fb" class="gold-text" target="_blank" style="display:none;"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" id="link-insta" class="gold-text" target="_blank" style="display:none;"><i class="fab fa-instagram"></i></a>
+            <a href="#" id="link-tiktok" class="gold-text" target="_blank" style="display:none;"><i class="fab fa-tiktok"></i></a>
         </div>
     </div>
 
@@ -117,7 +118,7 @@
         <div id="gallery-grid" class="grid"></div>
     </section>
 
-    <!-- Fullscreen Media Modal (لعرض الصورة/الفيديو بشكل كامل عند الضغط عليها) -->
+    <!-- Fullscreen Media Modal -->
     <div id="media-viewer-modal" class="modal" onclick="closeMediaViewer()">
         <div style="position: relative; max-width: 90%; max-height: 90%; text-align: center;" onclick="event.stopPropagation()">
             <button type="button" onclick="closeMediaViewer()" style="position: absolute; top: -40px; left: 0; background: none; border: none; color: #d4af37; font-size: 24px; cursor: pointer;"><i class="fas fa-times"></i> إغلاق</button>
@@ -162,7 +163,7 @@
             <!-- Tabs -->
             <div style="display: flex; gap: 6px; margin-bottom: 15px; flex-wrap: wrap;">
                 <button type="button" onclick="switchTab('products')" id="tab-btn-products" class="tab-btn active">إضافة معروض</button>
-                <button type="button" onclick="switchTab('manage')" id="tab-btn-manage" class="tab-btn">إدارة وحذف المنتجات</button>
+                <button type="button" onclick="switchTab('manage')" id="tab-btn-manage" class="tab-btn">إدارة المعروضات</button>
                 <button type="button" onclick="switchTab('inquiries')" id="tab-btn-inquiries" class="tab-btn">الطلبات (<span id="inquiry-count">0</span>)</button>
                 <button type="button" onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn">إعدادات الموقع</button>
             </div>
@@ -184,7 +185,7 @@
                 </form>
             </div>
 
-            <!-- Tab 2: Manage & Delete Products (New) -->
+            <!-- Tab 2: Manage & Delete Products -->
             <div id="tab-content-manage" style="display: none; max-height: 400px; overflow-y: auto;">
                 <h3 class="gold-text" style="font-family: 'Amiri'; margin-bottom: 10px; font-size: 16px;">حذف أو تعديل المعروضات الحالية</h3>
                 <div id="manage-products-list" style="display: flex; flex-direction: column; gap: 10px;">
@@ -200,10 +201,11 @@
                 </div>
             </div>
 
-            <!-- Tab 4: Settings -->
+            <!-- Tab 4: Settings (Updated with WhatsApp) -->
             <div id="tab-content-settings" style="display: none;">
                 <form onsubmit="saveSiteSettings(event)">
                     <input type="text" id="set-phone" placeholder="رقم الهاتف الأساسي">
+                    <input type="url" id="set-whatsapp" placeholder="رابط أو رقم الواتساب (مثال: https://wa.me/213...)">
                     <input type="text" id="set-loc" placeholder="العنوان / الفروع">
                     <input type="url" id="set-fb" placeholder="رابط الفيسبوك">
                     <input type="url" id="set-insta" placeholder="رابط الانستغرام">
@@ -314,10 +316,7 @@
             }
         ];
 
-        let globalProducts = [];
-
         function renderProducts(products) {
-            globalProducts = products;
             const grid = document.getElementById('gallery-grid');
             if (!grid) return;
             grid.innerHTML = '';
@@ -345,7 +344,6 @@
             renderManageProducts(products);
         }
 
-        // عرض المنتجات داخل لوحة التحكم لتمكين حذفها
         function renderManageProducts(products) {
             const container = document.getElementById('manage-products-list');
             if (!container) return;
@@ -398,11 +396,46 @@
                 if (s) {
                     if (s.phone && document.getElementById('top-phone')) document.getElementById('top-phone').innerText = s.phone;
                     if (s.location && document.getElementById('top-loc')) document.getElementById('top-loc').innerText = s.location;
-                    if (s.fb && document.getElementById('link-fb')) document.getElementById('link-fb').href = s.fb;
-                    if (s.insta && document.getElementById('link-insta')) document.getElementById('link-insta').href = s.insta;
-                    if (s.tiktok && document.getElementById('link-tiktok')) document.getElementById('link-tiktok').href = s.tiktok;
+                    
+                    // WhatsApp
+                    const waEl = document.getElementById('link-whatsapp');
+                    if (s.whatsapp && waEl) {
+                        waEl.href = s.whatsapp.startsWith('http') ? s.whatsapp : 'https://wa.me/' + s.whatsapp;
+                        waEl.style.display = 'inline-block';
+                    } else if (waEl) {
+                        waEl.style.display = 'none';
+                    }
 
+                    // Facebook
+                    const fbEl = document.getElementById('link-fb');
+                    if (s.fb && fbEl) {
+                        fbEl.href = s.fb;
+                        fbEl.style.display = 'inline-block';
+                    } else if (fbEl) {
+                        fbEl.style.display = 'none';
+                    }
+
+                    // Instagram
+                    const instaEl = document.getElementById('link-insta');
+                    if (s.insta && instaEl) {
+                        instaEl.href = s.insta;
+                        instaEl.style.display = 'inline-block';
+                    } else if (instaEl) {
+                        instaEl.style.display = 'none';
+                    }
+
+                    // TikTok
+                    const tiktokEl = document.getElementById('link-tiktok');
+                    if (s.tiktok && tiktokEl) {
+                        tiktokEl.href = s.tiktok;
+                        tiktokEl.style.display = 'inline-block';
+                    } else if (tiktokEl) {
+                        tiktokEl.style.display = 'none';
+                    }
+
+                    // تعبئة حقول الإعدادات داخل لوحة التحكم
                     if (document.getElementById('set-phone')) document.getElementById('set-phone').value = s.phone || '';
+                    if (document.getElementById('set-whatsapp')) document.getElementById('set-whatsapp').value = s.whatsapp || '';
                     if (document.getElementById('set-loc')) document.getElementById('set-loc').value = s.location || '';
                     if (document.getElementById('set-fb')) document.getElementById('set-fb').value = s.fb || '';
                     if (document.getElementById('set-insta')) document.getElementById('set-insta').value = s.insta || '';
@@ -547,12 +580,13 @@
         window.saveSiteSettings = function(e) {
             e.preventDefault();
             const phone = document.getElementById('set-phone').value;
+            const whatsapp = document.getElementById('set-whatsapp').value;
             const location = document.getElementById('set-loc').value;
             const fb = document.getElementById('set-fb').value;
             const insta = document.getElementById('set-insta').value;
             const tiktok = document.getElementById('set-tiktok').value;
 
-            db.ref('settings').set({ phone, location, fb, insta, tiktok }, (error) => {
+            db.ref('settings').set({ phone, whatsapp, location, fb, insta, tiktok }, (error) => {
                 if (error) {
                     alert('خطأ في حفظ الإعدادات: ' + error.message);
                 } else {

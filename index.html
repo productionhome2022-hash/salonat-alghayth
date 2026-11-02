@@ -12,7 +12,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -164,10 +163,10 @@
                         <option value="ديكورات داخلية">ديكورات داخلية</option>
                     </select>
                     <input type="text" id="p-price" required placeholder="السعر ($)">
-                    <label style="font-size: 12px; color: #d4af37; display: block; margin-bottom: 5px;">اختر صورة أو فيديو من المعرض:</label>
-                    <input type="file" id="p-file" accept="image/*,video/*" required style="padding: 10px;">
+                    <label style="font-size: 12px; color: #d4af37; display: block; margin-bottom: 5px;">اختر صورة من المعرض:</label>
+                    <input type="file" id="p-file" accept="image/*" required style="padding: 10px;">
                     <textarea id="p-desc" placeholder="الوصف التفصيلي"></textarea>
-                    <button type="submit" class="btn btn-gold" style="width: 100%;" id="upload-btn">رفع وحفظ المعروض</button>
+                    <button type="submit" class="btn btn-gold" style="width: 100%;" id="upload-btn">حفظ وإضافة</button>
                 </form>
             </div>
 
@@ -200,7 +199,6 @@
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
         const auth = firebase.auth();
-        const storage = firebase.storage();
 
         const defaultProducts = [
             {
@@ -215,14 +213,9 @@
             if (!grid) return;
             grid.innerHTML = '';
             products.forEach(p => {
-                let mediaElement = `<img src="${p.mediaUrl}" style="width: 100%; height: 220px; object-fit: cover;">`;
-                if (p.mediaType && p.mediaType.includes('video')) {
-                    mediaElement = `<video src="${p.mediaUrl}" controls style="width: 100%; height: 220px; object-fit: cover;"></video>`;
-                }
-
                 grid.innerHTML += `
                     <div class="glass-panel" style="overflow: hidden; padding: 0;">
-                        ${mediaElement}
+                        <img src="${p.mediaUrl}" style="width: 100%; height: 220px; object-fit: cover;">
                         <div style="padding: 15px;">
                             <span class="gold-text" style="font-size: 11px;">${p.category || ''}</span>
                             <h3 style="font-family: 'Amiri'; font-size: 18px; margin: 5px 0; color: #fff;">${p.title}</h3>
@@ -243,133 +236,4 @@
             db.ref('products').on('value', snapshot => {
                 const data = snapshot.val();
                 if (data) {
-                    const products = Object.keys(data).map(k => ({ id: k, ...data[k] }));
-                    renderProducts(products);
-                }
-            });
-        }
-
-        function loadSettings() {
-            db.ref('settings').on('value', snapshot => {
-                const s = snapshot.val();
-                if (s) {
-                    if (s.phone && document.getElementById('top-phone')) document.getElementById('top-phone').innerText = s.phone;
-                    if (s.location && document.getElementById('top-loc')) document.getElementById('top-loc').innerText = s.location;
-                    if (s.fb && document.getElementById('link-fb')) document.getElementById('link-fb').href = s.fb;
-                    if (s.insta && document.getElementById('link-insta')) document.getElementById('link-insta').href = s.insta;
-                    if (s.tiktok && document.getElementById('link-tiktok')) document.getElementById('link-tiktok').href = s.tiktok;
-                }
-            });
-        }
-
-        function openAdminLogin() { document.getElementById('admin-login-modal').style.display = 'flex'; }
-        function closeAdminLogin() { document.getElementById('admin-login-modal').style.display = 'none'; }
-        function closeAdminDashboard() { document.getElementById('admin-dashboard-modal').style.display = 'none'; }
-
-        function switchTab(tab) {
-            if (tab === 'products') {
-                document.getElementById('tab-content-products').style.display = 'block';
-                document.getElementById('tab-content-settings').style.display = 'none';
-                document.getElementById('tab-btn-products').classList.add('active');
-                document.getElementById('tab-btn-settings').classList.remove('active');
-            } else {
-                document.getElementById('tab-content-products').style.display = 'none';
-                document.getElementById('tab-content-settings').style.display = 'block';
-                document.getElementById('tab-btn-settings').classList.add('active');
-                document.getElementById('tab-btn-products').classList.remove('active');
-            }
-        }
-
-        function handleAdminLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('admin-email').value;
-            const pass = document.getElementById('admin-pass').value;
-
-            auth.signInWithEmailAndPassword(email, pass).then(() => {
-                closeAdminLogin();
-                document.getElementById('admin-dashboard-modal').style.display = 'flex';
-            }).catch(() => {
-                alert('خطأ في البيانات! تأكد من البريد وكلمة المرور.');
-            });
-        }
-
-        function addNewProduct(e) {
-            e.preventDefault();
-            const title = document.getElementById('p-title').value;
-            const category = document.getElementById('p-cat').value;
-            const price = document.getElementById('p-price').value;
-            const description = document.getElementById('p-desc').value;
-            const fileInput = document.getElementById('p-file');
-            const uploadBtn = document.getElementById('upload-btn');
-
-            if (!fileInput.files || !fileInput.files[0]) {
-                alert('الرجاء اختيار ملف (صورة أو فيديو)');
-                return;
-            }
-
-            const file = fileInput.files[0];
-            uploadBtn.innerText = 'جاري الرفع والحفظ...';
-            uploadBtn.disabled = true;
-
-            // رفع الملف إلى Firebase Storage
-            const storageRef = storage.ref('media/' + Date.now() + '_' + file.name);
-            const uploadTask = storageRef.put(file);
-
-            uploadTask.on('state_changed', null, (error) => {
-                alert('فشل الرفع: ' + error.message);
-                uploadBtn.innerText = 'رفع وحفظ المعروض';
-                uploadBtn.disabled = false;
-            }, () => {
-                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                    // حفظ رابط الملف وبيانات المنتج في Realtime Database
-                    db.ref('products').push({
-                        title, category, price, description, mediaUrl: downloadURL, mediaType: file.type
-                    }, () => {
-                        alert('تم رفع المعروض وحفظه بنجاح!');
-                        document.getElementById('p-title').value = '';
-                        document.getElementById('p-price').value = '';
-                        document.getElementById('p-desc').value = '';
-                        document.getElementById('p-file').value = '';
-                        uploadBtn.innerText = 'رفع وحفظ المعروض';
-                        uploadBtn.disabled = false;
-                        closeAdminDashboard();
-                    });
-                });
-            });
-        }
-
-        function saveSiteSettings(e) {
-            e.preventDefault();
-            const phone = document.getElementById('set-phone').value;
-            const location = document.getElementById('set-loc').value;
-            const fb = document.getElementById('set-fb').value;
-            const insta = document.getElementById('set-insta').value;
-            const tiktok = document.getElementById('set-tiktok').value;
-
-            db.ref('settings').set({ phone, location, fb, insta, tiktok }, () => {
-                alert('تم تحديث إعدادات الموقع!');
-                closeAdminDashboard();
-            });
-        }
-
-        function submitCustomerInquiry(e) {
-            e.preventDefault();
-            const name = document.getElementById('inquiry-name').value;
-            const phone = document.getElementById('inquiry-phone').value;
-            const message = document.getElementById('inquiry-message').value;
-
-            db.ref('inquiries').push({ name, phone, message, date: new Date().toLocaleString() }, () => {
-                alert('تم إرسال طلبك بنجاح!');
-                document.getElementById('inquiry-name').value = '';
-                document.getElementById('inquiry-phone').value = '';
-                document.getElementById('inquiry-message').value = '';
-            });
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            loadProducts();
-            loadSettings();
-        });
-    </script>
-</body>
-</html>
+                    const products = Object.keys(data).map(k

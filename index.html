@@ -3,471 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">صالونات الغيث الملكي | ديكور وصالونات ومفروشات فاخرة</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>صالونات الغيث الملكي | ديكور وصالونات ومفروشات فاخرة</title>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Amiri & Tajawal -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        gold: {
-                            light: '#f3e7c4',
-                            DEFAULT: '#d4af37',
-                            dark: '#aa820a',
-                        },
-                        darkBg: '#0b0b0b',
-                        cardBg: '#141414',
-                    },
-                    fontFamily: {
-                        tajawal: ['Tajawal', 'sans-serif'],
-                        amiri: ['Amiri', 'serif'],
-                    }
-                }
-            }
-        }
-    </script>
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Tajawal', sans-serif;
             background-color: #0b0b0b;
             color: #f3f4f6;
             overflow-x: hidden;
+            direction: rtl;
+            text-align: right;
         }
-        .gold-gradient-text {
+        .gold-text { color: #d4af37; }
+        .gold-gradient {
             background: linear-gradient(135deg, #bf953f 0%, #fc6 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .gold-border {
-            border-color: #d4af37;
-        }
-        .gold-bg {
-            background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%);
-        }
-        .cinematic-shadow {
-            box-shadow: 0 20px 50px rgba(212, 175, 55, 0.15);
-        }
+        .gold-bg { background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%); color: #000; }
+        .gold-border { border: 1px solid rgba(212, 175, 55, 0.3); }
         .glass-panel {
             background: rgba(20, 20, 20, 0.85);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 16px;
+            padding: 24px;
         }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
+        header {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(11, 11, 11, 0.95);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 30px;
         }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        .hero {
+            height: 80vh; background: url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1920') center/cover no-repeat;
+            display: flex; align-items: center; justify-content: center; text-align: center; position: relative;
+        }
+        .hero::after {
+            content: ''; position: absolute; inset: 0; background: rgba(11,11,11,0.7);
+        }
+        .hero-content { position: relative; z-index: 2; max-width: 800px; padding: 20px; }
+        .btn {
+            display: inline-block; padding: 12px 30px; border-radius: 6px; font-weight: bold; text-decoration: none; cursor: pointer; transition: 0.3s;
+        }
+        .btn-gold { background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%); color: #000; }
+        .btn-outline { border: 1px solid #d4af37; color: #d4af37; background: transparent; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        input, select, textarea {
+            width: 100%; background: #000; border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 8px; padding: 12px; color: #fff; margin-bottom: 15px; font-family: 'Tajawal';
+        }
+        .modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px;
         }
     </style>
 </head>
-<body class="bg-darkBg text-gray-100 selection:bg-gold selection:text-black">
+<body>
 
-    <!-- Top Bar: Contact & Social & Lang Switcher -->
-    <div class="bg-black border-b border-gold/20 py-2 px-4 text-xs">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
-            <div class="flex items-center gap-4 text-gold-light">
-                <span id="top-loc"><i class="fas fa-map-marker-alt ml-1 text-gold"></i> الجزائر (العاصمة - وهران - تلمسان)</span>
-                <span id="top-phone"><i class="fas fa-phone-alt ml-1 text-gold"></i> +213 555 000 000</span>
-            </div>
-            <div class="flex items-center gap-4">
-                <div class="flex gap-3 text-gold text-sm" id="social-links-bar">
-                    <a href="#" target="_blank" id="bar-fb" class="hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" target="_blank" id="bar-insta" class="hover:text-white transition"><i class="fab fa-instagram"></i></a>
-                    <a href="#" target="_blank" id="bar-tiktok" class="hover:text-white transition"><i class="fab fa-tiktok"></i></a>
-                </div>
-                <!-- Language Selector -->
-                <div class="flex items-center gap-1 bg-neutral-900 border border-gold/30 rounded px-2 py-0.5">
-                    <i class="fas fa-globe text-gold text-xs"></i>
-                    <select id="lang-switcher" onchange="changeLanguage(this.value)" class="bg-transparent text-gold-light text-xs focus:outline-none cursor-pointer">
-                        <option value="ar" class="bg-black text-white">العربية</option>
-                        <option value="en" class="bg-black text-white">English</option>
-                        <option value="fr" class="bg-black text-white">Français</option>
-                    </select>
-                </div>
-            </div>
+    <!-- Top Info Bar -->
+    <div style="background: #000; border-bottom: 1px solid rgba(212,175,55,0.2); padding: 8px 20px; font-size: 12px; display: flex; justify-content: space-between;">
+        <span class="gold-text"><i class="fas fa-map-marker-alt"></i> الجزائر (العاصمة - وهران - تلمسان) | هاتف: +213 555 000 000</span>
+        <div style="display: flex; gap: 15px;">
+            <a href="#" class="gold-text"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="gold-text"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="gold-text"><i class="fab fa-tiktok"></i></a>
         </div>
     </div>
 
-    <!-- Main Navigation Header -->
-    <header class="sticky top-0 z-50 glass-panel border-b border-gold/30">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <!-- Brand Logo -->
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full border border-gold flex items-center justify-center bg-black shadow-lg overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=150" alt="الغيث" class="w-full h-full object-cover">
-                </div>
-                <div>
-                    <span id="brand-title" class="text-2xl font-bold font-amiri gold-gradient-text tracking-wider">صالونات الغيث</span>
-                    <span id="brand-subtitle" class="block text-[10px] text-gold-light/70 tracking-widest uppercase">Al-Ghaith Salons & Furniture</span>
-                </div>
+    <!-- Header -->
+    <header>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="width: 50px; height: 50px; border-radius: 50%; border: 1px solid #d4af37; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=150" style="width:100%; height:100%; object-fit:cover;">
             </div>
-
-            <!-- Nav Links -->
-            <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
-                <a href="#hero" id="nav-home" class="text-gold hover:text-white transition">الرئيسية</a>
-                <a href="#gallery" id="nav-gallery" class="text-gray-300 hover:text-gold transition">المعرض والكتالوج</a>
-                <a href="#about" id="nav-about" class="text-gray-300 hover:text-gold transition">من نحن</a>
-                <a href="#contact" id="nav-contact" class="text-gray-300 hover:text-gold transition">اتصل بنا</a>
-            </nav>
-
-            <!-- Actions -->
-            <div class="flex items-center gap-3">
-                <button onclick="openInquiryModal()" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded border border-gold text-gold hover:bg-gold hover:text-black transition text-xs font-bold uppercase tracking-wider">
-                    <i class="fas fa-paper-plane"></i> <span id="btn-inquiry-text">اطلب تصميمك الخاص</span>
-                </button>
-                <button onclick="openAdminLogin()" class="p-2 rounded bg-neutral-900 border border-gold/40 text-gold hover:bg-gold/20 transition" title="لوحة التحكم">
-                    <i class="fas fa-lock"></i>
-                </button>
-                <!-- Mobile Menu Button -->
-                <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-gold">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
+            <div>
+                <h2 class="gold-gradient" style="font-family: 'Amiri'; font-size: 22px;">صالونات الغيث الملكي</h2>
+                <span style="font-size: 10px; color: #888; letter-spacing: 2px;">AL-GHAITH SALONS</span>
             </div>
         </div>
-        <!-- Mobile Dropdown Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-black/95 border-b border-gold/20 px-4 py-4 space-y-3">
-            <a href="#hero" onclick="toggleMobileMenu()" class="block text-gold py-1">الرئيسية</a>
-            <a href="#gallery" onclick="toggleMobileMenu()" class="block text-gray-300 py-1">المعرض والكتالوج</a>
-            <a href="#about" onclick="toggleMobileMenu()" class="block text-gray-300 py-1">من نحن</a>
-            <a href="#contact" onclick="toggleMobileMenu()" class="block text-gray-300 py-1">اتصل بنا</a>
+        <div>
+            <button onclick="openAdminLogin()" class="btn btn-outline" style="padding: 8px 15px; font-size: 12px;"><i class="fas fa-lock"></i> لوحة التحكم</button>
         </div>
     </header>
 
-    <!-- Cinematic Hero Section -->
-    <section id="hero" class="relative h-[85vh] flex items-center justify-center overflow-hidden">
-        <div class="absolute inset-0 z-0">
-            <img id="hero-bg-img" src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1920" alt="صالون الغيث الملكي" class="w-full h-full object-cover filter brightness-50 scale-105 transition-all duration-1000">
-            <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-darkBg/50 to-transparent"></div>
-        </div>
-
-        <div class="relative z-10 text-center max-w-4xl mx-auto px-4">
-            <span class="inline-block py-1 px-4 rounded-full border border-gold/40 bg-black/60 text-gold text-xs tracking-widest uppercase mb-4 animate-pulse" id="hero-badge">معارض الورشة الملكية في الجزائر</span>
-            <h1 id="hero-title" class="text-4xl sm:text-6xl lg:text-7xl font-bold font-amiri gold-gradient-text mb-6 leading-tight">صالون الغيث الملكي للمفروشات والديكور</h1>
-            <p id="hero-desc" class="text-base sm:text-xl text-gray-300 mb-8 max-w-2xl mx-auto font-light">نصمم ونصنع أفخم الصالونات والمفروشات العالمية حسب الطلب وفق أعلى معايير الجودة والذوق الرفيع.</p>
-            <div class="flex flex-wrap justify-center gap-4">
-                <a href="#gallery" id="hero-btn-explore" class="px-8 py-3.5 gold-bg text-black font-bold rounded shadow-lg hover:opacity-90 transition transform hover:-translate-y-0.5">استكشف المعرض الملكي</a>
-                <a href="#contact" id="hero-btn-contact" class="px-8 py-3.5 border border-gold text-gold font-bold rounded hover:bg-gold/10 transition">تواصل معنا فوراً</a>
-            </div>
-        </div>
-
-        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-gold to-transparent opacity-60"></div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="py-12 bg-neutral-950 border-b border-gold/10">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div class="p-6 rounded-xl glass-panel hover:border-gold/50 transition">
-                <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center text-gold text-2xl">
-                    <i class="fas fa-gem"></i>
-                </div>
-                <h3 id="feat-1-title" class="text-lg font-bold text-gold mb-2">معايير الجودة العالمية</h3>
-                <p id="feat-1-desc" class="text-gray-400 text-sm">نستخدم أجود أنواع الأخشاب والأقمشة العالمية الفاخرة لضمان متانة وفخامة لا تُضاهى.</p>
-            </div>
-            <div class="p-6 rounded-xl glass-panel hover:border-gold/50 transition">
-                <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center text-gold text-2xl">
-                    <i class="fas fa-pencil-ruler"></i>
-                </div>
-                <h3 id="feat-2-title" class="text-lg font-bold text-gold mb-2">نصمم ونصنع حسب الطلب</h3>
-                <p id="feat-2-desc" class="text-gray-400 text-sm">تفصيل دقيق لكافة الديكورات والصالونات والمفروشات بما يتناسب مع مساحتك وذوقك الخاص.</p>
-            </div>
-            <div class="p-6 rounded-xl glass-panel hover:border-gold/50 transition">
-                <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center text-gold text-2xl">
-                    <i class="fas fa-shipping-fast"></i>
-                </div>
-                <h3 id="feat-3-title" class="text-lg font-bold text-gold mb-2">تغطية فروع الجزائر</h3>
-                <p id="feat-3-desc" class="text-gray-400 text-sm">خدماتنا وورشاتنا متوفرة في الجزائر العاصمة، وهران، وتلمسان مع توصيل وتركيب احترافي.</p>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <span style="border: 1px solid rgba(212,175,55,0.5); padding: 5px 15px; border-radius: 20px; font-size: 12px; color: #d4af37; background: rgba(0,0,0,0.6);">معارض الورشة الملكية في الجزائر</span>
+            <h1 class="gold-gradient" style="font-family: 'Amiri'; font-size: 42px; margin: 20px 0;">صالون الغيث الملكي للمفروشات والديكور</h1>
+            <p style="color: #ccc; margin-bottom: 30px; font-size: 16px;">نصمم ونصنع أفخم الصالونات والمفروشات العالمية حسب الطلب وفق أعلى معايير الجودة والذوق الرفيع.</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <a href="#gallery" class="btn btn-gold">استكشف المعرض الملكي</a>
+                <a href="#contact" class="btn btn-outline">تواصل معنا</a>
             </div>
         </div>
     </section>
 
-    <!-- Gallery & Catalog Section -->
-    <section id="gallery" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <span class="text-gold text-xs tracking-widest uppercase mb-2 block" id="gallery-subtitle">الكتالوج الحصري</span>
-            <h2 id="gallery-title" class="text-3xl sm:text-4xl font-bold font-amiri gold-gradient-text">معرض صالون الغيث الملكي والمفروشات</h2>
-            <div class="w-24 h-0.5 bg-gold mx-auto mt-4"></div>
+    <!-- Gallery Section -->
+    <section id="gallery" style="padding: 60px 20px; max-width: 1200px; margin: 0 auto;">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <span class="gold-text" style="font-size: 12px; letter-spacing: 3px;">الكتالوج الحصري</span>
+            <h2 class="gold-gradient" style="font-family: 'Amiri'; font-size: 32px; margin-top: 10px;">معرض صالون الغيث الملكي والمفروشات</h2>
+            <div style="width: 80px; height: 2px; background: #d4af37; margin: 15px auto;"></div>
         </div>
 
-        <div class="flex flex-wrap justify-center gap-3 mb-12" id="category-filters">
-            <button onclick="filterGallery('all')" class="px-5 py-2 rounded-full border border-gold bg-gold text-black font-medium text-sm transition cat-btn active-cat" data-cat="all" id="cat-all">الكل</button>
-            <button onclick="filterGallery('salons')" class="px-5 py-2 rounded-full border border-gold/40 text-gold hover:bg-gold/20 font-medium text-sm transition cat-btn" data-cat="salons" id="cat-salons">صالونات ملكية</button>
-            <button onclick="filterGallery('furniture')" class="px-5 py-2 rounded-full border border-gold/40 text-gold hover:bg-gold/20 font-medium text-sm transition cat-btn" data-cat="furniture" id="cat-furniture">مفروشات فاخرة</button>
-            <button onclick="filterGallery('decor')" class="px-5 py-2 rounded-full border border-gold/40 text-gold hover:bg-gold/20 font-medium text-sm transition cat-btn" data-cat="decor" id="cat-decor">ديكورات داخلية</button>
-        </div>
-
-        <div id="gallery-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Dynamic items -->
+        <div id="gallery-grid" class="grid">
+            <!-- Dynamic Products -->
         </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about" class="py-20 bg-neutral-950 border-t border-b border-gold/10 relative overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-                <span class="text-gold text-xs tracking-widest uppercase mb-2 block" id="about-subtitle">قصة نجاح وإتقان</span>
-                <h2 id="about-title" class="text-3xl sm:text-4xl font-bold font-amiri gold-gradient-text mb-6">فنون الديكور وصالونات الغيث الملكي في الجزائر</h2>
-                <p id="about-p1" class="text-gray-300 mb-4 leading-relaxed">نحن في **صالونات الغيث الملكي** نؤمن بأن الأثاث والديكور هما عنوان الفخامة والذوق الرفيع. نقدم لعملائنا في الجزائر العاصمة، وهران، وتلمسان أرقى تصاميم الصالونات والمفروشات المصنوعة خصيصاً حسب الطلب.</p>
-                <p id="about-p2" class="text-gray-300 mb-8 leading-relaxed">تتميز أعمالنا بالدقة العالية، والجودة العالمية للمواد المستخدمة، واللمسات السينمائية الساحرة التي تضفي على منزلك طابعاً ملكياً فريداً.</p>
-                <div class="grid grid-cols-3 gap-4 text-center border-t border-gold/20 pt-6">
-                    <div>
-                        <span class="block text-3xl font-bold font-amiri text-gold">100%</span>
-                        <span class="text-xs text-gray-400" id="stat-1">جودة مضمونة</span>
-                    </div>
-                    <div>
-                        <span class="block text-3xl font-bold font-amiri text-gold">3</span>
-                        <span class="text-xs text-gray-400" id="stat-2">فروع رئيسية</span>
-                    </div>
-                    <div>
-                        <span class="block text-3xl font-bold font-amiri text-gold">VIP</span>
-                        <span class="text-xs text-gray-400" id="stat-3">خدمة عملاء</span>
-                    </div>
-                </div>
-            </div>
-            <div class="relative">
-                <div class="absolute -inset-1 bg-gradient-to-r from-gold to-yellow-600 rounded-2xl blur opacity-30"></div>
-                <div class="relative rounded-2xl overflow-hidden border border-gold/30 shadow-2xl">
-                    <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=1000" alt="ورشة صالونات الغيث" class="w-full h-[400px] object-cover">
-                </div>
-            </div>
+    <!-- Contact Section -->
+    <section id="contact" style="padding: 60px 20px; max-width: 800px; margin: 0 auto;">
+        <div class="glass-panel">
+            <h3 class="gold-text" style="font-family: 'Amiri'; font-size: 24px; margin-bottom: 20px; text-align: center;">نموذج الاستفسار أو طلب الشراء المباشر</h3>
+            <form onsubmit="submitCustomerInquiry(event)">
+                <input type="text" id="inquiry-name" required placeholder="الاسم الكريم">
+                <input type="text" id="inquiry-phone" required placeholder="رقم الهاتف / واتساب">
+                <textarea id="inquiry-message" rows="4" required placeholder="تفاصيل الطلب أو الاستفسار..."></textarea>
+                <button type="submit" class="btn btn-gold" style="width: 100%;">إرسال الطلب والاستفسار</button>
+            </form>
         </div>
     </section>
-
-    <!-- Contact & Order Section -->
-    <section id="contact" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <span class="text-gold text-xs tracking-widest uppercase mb-2 block" id="contact-subtitle">تواصل معنا</span>
-            <h2 id="contact-title" class="text-3xl sm:text-4xl font-bold font-amiri gold-gradient-text">راسلنا لأي استفسار أو طلب شراء</h2>
-            <div class="w-24 h-0.5 bg-gold mx-auto mt-4"></div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div class="space-y-8">
-                <div class="glass-panel p-8 rounded-xl border border-gold/20 space-y-6">
-                    <h3 id="contact-info-title" class="text-xl font-bold text-gold font-amiri">معلومات التواصل والفروع</h3>
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded bg-gold/10 border border-gold/30 flex items-center justify-center text-gold shrink-0 mt-1">
-                            <i class="fas fa-map-marker-alt"></i>
-                        </div>
-                        <div>
-                            <h4 id="branch-title" class="font-bold text-white">فروعنا الرئيسية في الجزائر</h4>
-                            <p class="text-gray-400 text-sm">الجزائر العاصمة | وهران | تلمسان</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded bg-gold/10 border border-gold/30 flex items-center justify-center text-gold shrink-0 mt-1">
-                            <i class="fas fa-phone-alt"></i>
-                        </div>
-                        <div>
-                            <h4 id="phone-label" class="font-bold text-white">هاتف / واتساب</h4>
-                            <p class="text-gray-400 text-sm" id="display-phone">+213 555 000 000</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded bg-gold/10 border border-gold/30 flex items-center justify-center text-gold shrink-0 mt-1">
-                            <i class="fas fa-share-alt"></i>
-                        </div>
-                        <div>
-                            <h4 id="social-label" class="font-bold text-white">شبكات التواصل الاجتماعي</h4>
-                            <div class="flex gap-4 mt-2 text-gold" id="contact-social-icons">
-                                <a href="#" target="_blank" id="contact-fb" class="hover:text-white transition"><i class="fab fa-facebook-f text-lg"></i> فيسبوك</a>
-                                <a href="#" target="_blank" id="contact-insta" class="hover:text-white transition"><i class="fab fa-instagram text-lg"></i> انستغرام</a>
-                                <a href="#" target="_blank" id="contact-tiktok" class="hover:text-white transition"><i class="fab fa-tiktok text-lg"></i> تيك توك</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass-panel p-8 rounded-xl border border-gold/20">
-                <h3 id="form-title" class="text-xl font-bold text-gold font-amiri mb-6">نموذج الاستفسار أو طلب الشراء المباشر</h3>
-                <form id="customer-inquiry-form" onsubmit="submitCustomerInquiry(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1" id="lbl-name">الاسم الكريم</label>
-                        <input type="text" id="inquiry-name" required class="w-full bg-black border border-gold/30 rounded p-3 text-white focus:outline-none focus:border-gold">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1" id="lbl-phone">رقم الهاتف / واتساب</label>
-                        <input type="text" id="inquiry-phone" required class="w-full bg-black border border-gold/30 rounded p-3 text-white focus:outline-none focus:border-gold">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1" id="lbl-msg">تفاصيل الطلب أو الاستفسار</label>
-                        <textarea id="inquiry-message" rows="4" required class="w-full bg-black border border-gold/30 rounded p-3 text-white focus:outline-none focus:border-gold" placeholder="اكتب تفاصيل الصالون أو المفروشات التي تود تفصيلها..."></textarea>
-                    </div>
-                    <button type="submit" id="btn-submit-inquiry" class="w-full py-3.5 gold-bg text-black font-bold rounded shadow hover:opacity-90 transition">إرسال الطلب والاستفسار</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-black border-t border-gold/20 py-12 text-center text-gray-400 text-sm">
-        <div class="max-w-7xl mx-auto px-4 space-y-4">
-            <div class="flex items-center justify-center gap-2">
-                <span class="text-xl font-bold font-amiri gold-gradient-text" id="footer-brand">صالونات الغيث الملكي</span>
-            </div>
-            <p id="footer-rights">جميع الحقوق محفوظة © 2026 صالون الغيث الملكي - الجزائر (العاصمة، وهران، تلمسان)</p>
-        </div>
-    </footer>
-
-    <!-- Product Detail Modal -->
-    <div id="product-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="glass-panel max-w-2xl w-full rounded-2xl border border-gold/40 overflow-hidden relative p-6 sm:p-8">
-            <button onclick="closeProductModal()" class="absolute top-4 left-4 text-gold hover:text-white text-xl">
-                <i class="fas fa-times"></i>
-            </button>
-            <div id="modal-content" class="space-y-6">
-                <!-- Dynamic Modal Content -->
-            </div>
-        </div>
-    </div>
 
     <!-- Admin Login Modal -->
-    <div id="admin-login-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="glass-panel max-w-md w-full rounded-2xl border border-gold/40 p-6 relative">
-            <button onclick="closeAdminLogin()" class="absolute top-4 left-4 text-gold hover:text-white">
-                <i class="fas fa-times"></i>
-            </button>
-            <h3 class="text-xl font-bold text-gold font-amiri mb-6 text-center" id="admin-login-title">تسجيل دخول لوحة التحكم</h3>
-            <form onsubmit="handleAdminLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1" id="lbl-admin-user">اسم المستخدم</label>
-                    <input type="text" id="admin-user" required class="w-full bg-black border border-gold/30 rounded p-3 text-white focus:outline-none focus:border-gold">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1" id="lbl-admin-pass">كلمة المرور</label>
-                    <input type="password" id="admin-pass" required class="w-full bg-black border border-gold/30 rounded p-3 text-white focus:outline-none focus:border-gold">
-                </div>
-                <button type="submit" class="w-full py-3 gold-bg text-black font-bold rounded shadow">دخول الأدمن</button>
+    <div id="admin-login-modal" class="modal">
+        <div class="glass-panel" style="max-width: 400px; width: 100%; position: relative;">
+            <button onclick="closeAdminLogin()" style="position: absolute; top: 15px; left: 15px; background: none; border: none; color: #d4af37; font-size: 18px; cursor: pointer;"><i class="fas fa-times"></i></button>
+            <h3 class="gold-text" style="font-family: 'Amiri'; margin-bottom: 20px; text-align: center;">تسجيل دخول لوحة التحكم</h3>
+            <form onsubmit="handleAdminLogin(event)">
+                <input type="email" id="admin-email" required placeholder="البريد الإلكتروني للأدمن">
+                <input type="password" id="admin-pass" required placeholder="كلمة المرور">
+                <button type="submit" class="btn btn-gold" style="width: 100%;">دخول الأدمن</button>
             </form>
         </div>
     </div>
 
     <!-- Admin Dashboard Modal -->
-    <div id="admin-dashboard-modal" class="fixed inset-0 z-50 hidden bg-black/95 overflow-y-auto p-4 sm:p-8">
-        <div class="max-w-6xl mx-auto space-y-8">
-            <div class="flex justify-between items-center border-b border-gold/30 pb-4">
-                <h2 class="text-2xl font-bold text-gold font-amiri" id="dash-title">لوحة تحكم صالونات الغيث الملكي</h2>
-                <button onclick="closeAdminDashboard()" class="px-4 py-2 bg-neutral-900 border border-gold text-gold rounded hover:bg-gold hover:text-black transition">إغلاق اللوحة</button>
+    <div id="admin-dashboard-modal" class="modal" style="justify-content: flex-start; overflow-y: auto;">
+        <div class="glass-panel" style="max-width: 800px; width: 100%; margin: 40px auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 15px; margin-bottom: 20px;">
+                <h2 class="gold-text" style="font-family: 'Amiri';">لوحة تحكم صالونات الغيث الملكي</h2>
+                <button onclick="closeAdminDashboard()" class="btn btn-outline" style="padding: 5px 15px; font-size: 12px;">إغلاق</button>
             </div>
 
-            <!-- Tabs -->
-            <div class="flex flex-wrap gap-3">
-                <button onclick="switchTab('products')" class="px-4 py-2 rounded bg-gold text-black font-bold text-xs tab-btn" id="tab-prod">إدارة المعروضات (صور وفيديو)</button>
-                <button onclick="switchTab('inquiries')" class="px-4 py-2 rounded bg-neutral-900 border border-gold/30 text-gold text-xs tab-btn" id="tab-inq">رسائل واستفسارات العملاء</button>
-                <button onclick="switchTab('settings')" class="px-4 py-2 rounded bg-neutral-900 border border-gold/30 text-gold text-xs tab-btn" id="tab-set">إعدادات الموقع والسوشيال</button>
-            </div>
-
-            <!-- Tab 1: Products Management -->
-            <div id="section-products" class="admin-section space-y-6">
-                <div class="glass-panel p-6 rounded-xl border border-gold/20">
-                    <h3 class="text-lg font-bold text-gold mb-4" id="add-prod-title">إضافة معروض جديد (رفع من الجهاز)</h3>
-                    <form onsubmit="addNewProduct(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1" id="lbl-p-title">عنوان المعروض</label>
-                            <input type="text" id="p-title" required class="w-full bg-black border border-gold/30 rounded p-2.5 text-white text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1" id="lbl-p-cat">القسم</label>
-                            <select id="p-cat" class="w-full bg-black border border-gold/30 rounded p-2.5 text-white text-sm">
-                                <option value="salons">صالونات ملكية</option>
-                                <option value="furniture">مفروشات فاخرة</option>
-                                <option value="decor">ديكورات داخلية</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1" id="lbl-p-price">السعر (تم تخفيضه للربع)</label>
-                            <input type="text" id="p-price" required class="w-full bg-black border border-gold/30 rounded p-2.5 text-white text-sm" placeholder="مثال: $250">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1" id="lbl-p-file">رفع صورة أو فيديو من المعرض</label>
-                            <input type="file" id="p-file" accept="image/*,video/*" required class="w-full bg-black border border-gold/30 rounded p-2 text-white text-xs file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-gold file:text-black hover:file:opacity-80">
-                        </div>
-                        <div class="sm:col-span-2">
-                            <label class="block text-xs text-gray-400 mb-1" id="lbl-p-desc">الوصف التفصيلي</label>
-                            <textarea id="p-desc" rows="2" class="w-full bg-black border border-gold/30 rounded p-2.5 text-white text-sm"></textarea>
-                        </div>
-                        <div class="sm:col-span-2">
-                            <button type="submit" class="px-6 py-2.5 gold-bg text-black font-bold rounded text-sm">إضافة المعروض للمنصة</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Products Table -->
-                <div class="glass-panel p-6 rounded-xl border border-gold/20 overflow-x-auto">
-                    <h3 class="text-lg font-bold text-gold mb-4" id="list-prod-title">قائمة المعروضات الحالية</h3>
-                    <table class="w-full text-right text-sm">
-                        <thead>
-                            <tr class="border-b border-gold/20 text-gold">
-                                <th class="pb-3" id="th-img">الصورة/الفيديو</th>
-                                <th class="pb-3" id="th-title">العنوان</th>
-                                <th class="pb-3" id="th-cat">القسم</th>
-                                <th class="pb-3" id="th-price">السعر</th>
-                                <th class="pb-3" id="th-action">إجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-products-list">
-                            <!-- Dynamic rows -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Tab 2: Inquiries -->
-            <div id="section-inquiries" class="admin-section hidden space-y-6">
-                <div class="glass-panel p-6 rounded-xl border border-gold/20">
-                    <h3 class="text-lg font-bold text-gold mb-4" id="inq-list-title">رسائل واستفسارات العملاء الواردة</h3>
-                    <div id="admin-inquiries-list" class="space-y-4">
-                        <!-- Dynamic Inquiries -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 3: Settings & Social -->
-            <div id="section-settings" class="admin-section hidden space-y-6">
-                <div class="glass-panel p-6 rounded-xl border border-gold/20 max-w-xl">
-                    <h3 class="text-lg font-bold text-gold mb-4" id="set-title">إعدادات التواصل وروابط السوشيال ميديا والعنوان</h3>
-                    <form onsubmit="saveSiteSettings(event)" class="space-y-4">
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1" id="lbl-s-phone">رقم الهاتف الأساسي</label>
-                            <input type="text" id="set-phone" class="w-full bg-black border border-gold/30 rounded p-2.5 text-white text-sm" value="+213 555 000 000">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1" id="lbl-s-loc">العنوان (الجزائر)</label>
-                            <input type="text" id="set-loc" class="w-full bg-black border border-gold/30 rounded p-2.5 text-white text-sm" value="الجزائر العاصمة - وهران - تلمسان">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">رابط صفحة الفيسبوك</label>
-                            <input type="url" id="set-fb" class="w-full bg-black border border-gold/30 rounded p-2.5 text-white text-sm" placeholder="https://facebook.com/...">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">رابط حساب الانستغرام</label>
-                            <input type="url" id="set-insta" class="w-full bg-black border border-gold/30 rounded p-2.5 text-white text-sm" placeholder="https://instagram.com/...">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">رابط حساب التيك توك</label>
-                            <input type="url" id="set-tiktok" class="w-full bg-black border border-gold/30 rounded p-2.5 text-white text-sm" placeholder="https://tiktok.com/...">
-                        </div>
-                        <button type="submit" class="px-6 py-2.5 gold-bg text-black font-bold rounded text-sm">حفظ التعديلات</button>
-                    </form>
-                </div>
-            </div>
+            <h3 class="gold-text" style="margin-bottom: 15px;">إضافة معروض جديد (رفع من الجهاز)</h3>
+            <form onsubmit="addNewProduct(event)">
+                <input type="text" id="p-title" required placeholder="عنوان المعروض">
+                <select id="p-cat">
+                    <option value="salons">صالونات ملكية</option>
+                    <option value="furniture">مفروشات فاخرة</option>
+                    <option value="decor">ديكورات داخلية</option>
+                </select>
+                <input type="text" id="p-price" required placeholder="السعر ($)">
+                <input type="file" id="p-file" accept="image/*,video/*" required style="padding: 10px;">
+                <textarea id="p-desc" placeholder="الوصف التفصيلي"></textarea>
+                <button type="submit" class="btn btn-gold" style="width: 100%;">إضافة المعروض للمنصة</button>
+            </form>
         </div>
     </div>
 
-    <!-- JavaScript Application Logic -->
+    <!-- JavaScript Logic -->
     <script>
-        // Real User Firebase Configuration (Connected Successfully)
         const firebaseConfig = {
             apiKey: "AIzaSyAQwUbMVlaygM5K0G6H8Gu3rjstoZkDO0I",
             authDomain: "al-ghaith-487f3.firebaseapp.com",
@@ -479,327 +184,47 @@
             measurementId: "G-TDBEE9L84V"
         };
         
-        // Initialize Firebase
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
-
-        // Multi-Language Dictionary
-        const translations = {
-            ar: {
-                pageTitle: "صالونات الغيث الملكي | ديكور وصالونات ومفروشات فاخرة",
-                topLoc: "الجزائر (العاصمة - وهران - تلمسان)",
-                brandTitle: "صالونات الغيث الملكي",
-                brandSubtitle: "Al-Ghaith Salons & Furniture",
-                navHome: "الرئيسية",
-                navGallery: "المعرض والكتالوج",
-                navAbout: "من نحن",
-                navContact: "اتصل بنا",
-                btnInquiryText: "اطلب تصميمك الخاص",
-                heroBadge: "معارض الورشة الملكية في الجزائر",
-                heroTitle: "صالون الغيث الملكي للمفروشات والديكور",
-                heroDesc: "نصمم ونصنع أفخم الصالونات والمفروشات العالمية حسب الطلب وفق أعلى معايير الجودة والذوق الرفيع.",
-                heroBtnExplore: "استكشف المعرض الملكي",
-                heroBtnContact: "تواصل معنا فوراً",
-                feat1Title: "معايير الجودة العالمية",
-                feat1Desc: "نستخدم أجود أنواع الأخشاب والأقمشة العالمية الفاخرة لضمان متانة وفخامة لا تُضاهى.",
-                feat2Title: "نصمم ونصنع حسب الطلب",
-                feat2Desc: "تفصيل دقيق لكافة الديكورات والصالونات والمفروشات بما يتناسب مع مساحتك وذوقك الخاص.",
-                feat3Title: "تغطية فروع الجزائر",
-                feat3Desc: "خدماتنا وورشاتنا متوفرة في الجزائر العاصمة، وهران، وتلمسان مع توصيل وتركيب احترافي.",
-                gallerySubtitle: "الكتالوج الحصري",
-                galleryTitle: "معرض صالون الغيث الملكي والمفروشات",
-                catAll: "الكل",
-                catSalons: "صالونات ملكية",
-                catFurniture: "مفروشات فاخرة",
-                catDecor: "ديكورات داخلية",
-                aboutSubtitle: "قصة نجاح وإتقان",
-                aboutTitle: "فنون الديكور وصالونات الغيث الملكي في الجزائر",
-                aboutP1: "نحن في صالونات الغيث الملكي نؤمن بأن الأثاث والديكور هما عنوان الفخامة والذوق الرفيع. نقدم لعملائنا في الجزائر العاصمة، وهران، وتلمسان أرقى تصاميم الصالونات والمفروشات المصنوعة خصيصاً حسب الطلب.",
-                aboutP2: "تتميز أعمالنا بالدقة العالية، والجودة العالمية للمواد المستخدمة، واللمسات السينمائية الساحرة التي تضفي على منزلك طابعاً ملكياً فريداً.",
-                stat1: "جودة مضمونة",
-                stat2: "فروع رئيسية",
-                stat3: "خدمة عملاء",
-                contactSubtitle: "تواصل معنا",
-                contactTitle: "راسلنا لأي استفسار أو طلب شراء",
-                contactInfoTitle: "معلومات التواصل والفروع",
-                branchTitle: "فروعنا الرئيسية في الجزائر",
-                phoneLabel: "هاتف / واتساب",
-                socialLabel: "شبكات التواصل الاجتماعي",
-                formTitle: "نموذج الاستفسار أو طلب الشراء المباشر",
-                lblName: "الاسم الكريم",
-                lblPhone: "رقم الهاتف / واتساب",
-                lblMsg: "تفاصيل الطلب أو الاستفسار",
-                btnSubmitInquiry: "إرسال الطلب والاستفسار",
-                footerBrand: "صالونات الغيث الملكي",
-                footerRights: "جميع الحقوق محفوظة © 2026 صالون الغيث الملكي - الجزائر (العاصمة، وهران، تلمسان)"
-            },
-            en: {
-                pageTitle: "Al-Ghaith Royal Salons | Luxury Decor & Custom Furniture",
-                topLoc: "Algeria (Algiers - Oran - Tlemcen)",
-                brandTitle: "Al-Ghaith Royal Salons",
-                brandSubtitle: "Al-Ghaith Salons & Furniture",
-                navHome: "Home",
-                navGallery: "Gallery & Catalog",
-                navAbout: "About Us",
-                navContact: "Contact Us",
-                btnInquiryText: "Request Custom Design",
-                heroBadge: "Royal Workshop Exhibitions in Algeria",
-                heroTitle: "Al-Ghaith Royal Salon for Furniture & Decor",
-                heroDesc: "We design and manufacture the most luxurious international salons and custom furniture according to the highest standards of quality.",
-                heroBtnExplore: "Explore Royal Gallery",
-                heroBtnContact: "Contact Us Now",
-                feat1Title: "Global Quality Standards",
-                feat1Desc: "We use the finest global woods and luxury fabrics to ensure unmatched durability and elegance.",
-                feat2Title: "We Design & Manufacture Custom",
-                feat2Desc: "Precise detailing for all decors, salons, and furniture tailored to your space and taste.",
-                feat3Title: "Algeria Branch Coverage",
-                feat3Desc: "Our services and workshops are available in Algiers, Oran, and Tlemcen with professional delivery.",
-                gallerySubtitle: "Exclusive Catalog",
-                galleryTitle: "Al-Ghaith Royal Salon & Furniture Gallery",
-                catAll: "All",
-                catSalons: "Royal Salons",
-                catFurniture: "Luxury Furniture",
-                catDecor: "Interior Decor",
-                aboutSubtitle: "Success & Mastery",
-                aboutTitle: "Decor Arts & Al-Ghaith Royal Salons in Algeria",
-                aboutP1: "At Al-Ghaith Royal Salons, we believe furniture and decor define luxury. We offer our clients in Algiers, Oran, and Tlemcen the finest custom-made salon designs.",
-                aboutP2: "Our work features high precision, global material quality, and magical cinematic touches.",
-                stat1: "Guaranteed Quality",
-                stat2: "Main Branches",
-                stat3: "Customer Care",
-                contactSubtitle: "Get in Touch",
-                contactTitle: "Message Us for Inquiries or Purchases",
-                contactInfoTitle: "Contact & Branch Information",
-                branchTitle: "Our Main Branches in Algeria",
-                phoneLabel: "Phone / WhatsApp",
-                socialLabel: "Social Media Networks",
-                formTitle: "Inquiry or Direct Purchase Form",
-                lblName: "Full Name",
-                lblPhone: "Phone / WhatsApp Number",
-                lblMsg: "Order Details or Inquiry",
-                btnSubmitInquiry: "Send Inquiry & Order",
-                footerBrand: "Al-Ghaith Royal Salons",
-                footerRights: "All Rights Reserved © 2026 Al-Ghaith Royal Salon - Algeria (Algiers, Oran, Tlemcen)"
-            },
-            fr: {
-                pageTitle: "Salons Royaux Al-Ghaith | Décoration & Mobilier Sur Mesure",
-                topLoc: "Algérie (Alger - Oran - Tlemcen)",
-                brandTitle: "Salons Royaux Al-Ghaith",
-                brandSubtitle: "Al-Ghaith Salons & Furniture",
-                navHome: "Accueil",
-                navGallery: "Galerie & Catalogue",
-                navAbout: "À propos",
-                navContact: "Contactez-nous",
-                btnInquiryText: "Demander sur mesure",
-                heroBadge: "Expositions de l'atelier royal en Algérie",
-                heroTitle: "Salon Royal Al-Ghaith pour le Mobilier & Décor",
-                heroDesc: "Nous concevons et fabriquons les salons internationaux et meubles sur mesure les plus luxueux selon les normes de qualité.",
-                heroBtnExplore: "Explorer la Galerie",
-                heroBtnContact: "Contactez-nous",
-                feat1Title: "Normes de Qualité Mondiales",
-                feat1Desc: "Nous utilisons les meilleurs bois et tissus luxueux pour assurer durabilité et élégance.",
-                feat2Title: "Conception & Fabrication Sur Mesure",
-                feat2Desc: "Détails précis pour tous les décors et salons adaptés à votre espace et goût.",
-                feat3Title: "Couvrance des Branches en Algérie",
-                feat3Desc: "Nos services et ateliers sont disponibles à Alger, Oran et Tlemcen avec installation pro.",
-                gallerySubtitle: "Catalogue Exclusif",
-                galleryTitle: "Galerie des Salons & Mobilier Royaux Al-Ghaith",
-                catAll: "Tous",
-                catSalons: "Salons Royaux",
-                catFurniture: "Mobilier de Luxe",
-                catDecor: "Décoration Intérieure",
-                aboutSubtitle: "Succès & Maîtrise",
-                aboutTitle: "Arts de la Décoration & Salons Royaux Al-Ghaith en Algérie",
-                aboutP1: "Chez Salons Royaux Al-Ghaith, nous croyons que le mobilier et le décor définissent le luxe. Nous offrons à nos clients à Alger, Oran et Tlemcen les meilleurs designs sur mesure.",
-                aboutP2: "Notre travail se distingue par une haute précision et des touches cinématographiques magiques.",
-                stat1: "Qualité Garantie",
-                stat2: "Branches Principales",
-                stat3: "Service Client",
-                contactSubtitle: "Contactez-nous",
-                contactTitle: "Envoyez-nous un message pour toute demande",
-                contactInfoTitle: "Informations de Contact & Branches",
-                branchTitle: "Nos Branches Principales en Algérie",
-                phoneLabel: "Téléphone / WhatsApp",
-                socialLabel: "Réseaux Sociaux",
-                formTitle: "Formulaire de Demande ou Achat Direct",
-                lblName: "Nom complet",
-                lblPhone: "Téléphone / WhatsApp",
-                lblMsg: "Détails de la demande",
-                btnSubmitInquiry: "Envoyer la Demande",
-                footerBrand: "Salons Royaux Al-Ghaith",
-                footerRights: "Tous droits réservés © 2026 Salon Royal Al-Ghaith - Algérie (Alger, Oran, Tlemcen)"
-            }
-        };
-
-        function changeLanguage(lang) {
-            const t = translations[lang];
-            if (!t) return;
-            document.documentElement.lang = lang;
-            document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
-
-            document.getElementById('page-title').innerText = t.pageTitle;
-            document.getElementById('top-loc').innerHTML = `<i class="fas fa-map-marker-alt ml-1 text-gold"></i> ${t.topLoc}`;
-            document.getElementById('brand-title').innerText = t.brandTitle;
-            document.getElementById('nav-home').innerText = t.navHome;
-            document.getElementById('nav-gallery').innerText = t.navGallery;
-            document.getElementById('nav-about').innerText = t.navAbout;
-            document.getElementById('nav-contact').innerText = t.navContact;
-            document.getElementById('btn-inquiry-text').innerText = t.btnInquiryText;
-            document.getElementById('hero-badge').innerText = t.heroBadge;
-            document.getElementById('hero-title').innerText = t.heroTitle;
-            document.getElementById('hero-desc').innerText = t.heroDesc;
-            document.getElementById('hero-btn-explore').innerText = t.heroBtnExplore;
-            document.getElementById('hero-btn-contact').innerText = t.heroBtnContact;
-
-            document.getElementById('feat-1-title').innerText = t.feat1Title;
-            document.getElementById('feat-1-desc').innerText = t.feat1Desc;
-            document.getElementById('feat-2-title').innerText = t.feat2Title;
-            document.getElementById('feat-2-desc').innerText = t.feat2Desc;
-            document.getElementById('feat-3-title').innerText = t.feat3Title;
-            document.getElementById('feat-3-desc').innerText = t.feat3Desc;
-
-            document.getElementById('gallery-subtitle').innerText = t.gallerySubtitle;
-            document.getElementById('gallery-title').innerText = t.galleryTitle;
-            document.getElementById('cat-all').innerText = t.catAll;
-            document.getElementById('cat-salons').innerText = t.catSalons;
-            document.getElementById('cat-furniture').innerText = t.catFurniture;
-            document.getElementById('cat-decor').innerText = t.catDecor;
-
-            document.getElementById('about-subtitle').innerText = t.aboutSubtitle;
-            document.getElementById('about-title').innerText = t.aboutTitle;
-            document.getElementById('about-p1').innerText = t.aboutP1;
-            document.getElementById('about-p2').innerText = t.aboutP2;
-            document.getElementById('stat-1').innerText = t.stat1;
-            document.getElementById('stat-2').innerText = t.stat2;
-            document.getElementById('stat-3').innerText = t.stat3;
-
-            document.getElementById('contact-subtitle').innerText = t.contactSubtitle;
-            document.getElementById('contact-title').innerText = t.contactTitle;
-            document.getElementById('contact-info-title').innerText = t.contactInfoTitle;
-            document.getElementById('branch-title').innerText = t.branchTitle;
-            document.getElementById('phone-label').innerText = t.phoneLabel;
-            document.getElementById('social-label').innerText = t.socialLabel;
-            document.getElementById('form-title').innerText = t.formTitle;
-            document.getElementById('lbl-name').innerText = t.lblName;
-            document.getElementById('lbl-phone').innerText = t.lblPhone;
-            document.getElementById('lbl-msg').innerText = t.lblMsg;
-            document.getElementById('btn-submit-inquiry').innerText = t.btnSubmitInquiry;
-
-            document.getElementById('footer-brand').innerText = t.footerBrand;
-            document.getElementById('footer-rights').innerText = t.footerRights;
-        }
+        const auth = firebase.auth();
 
         let defaultProducts = [
             {
-                id: '1',
-                title: 'صالون الغيث الملكي المذهب الفاخر',
-                category: 'salons',
-                price: '$250',
+                id: '1', title: 'صالون الغيث الملكي المذهب الفاخر', category: 'صالونات ملكية', price: '$250',
                 mediaUrl: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=800',
-                mediaType: 'image',
-                description: 'تصميم ملكي فريد مطلي بماء الذهب عيار 24 مع أقمشة مخملية فاخرة تناسب القصور والفلل الفاخرة.'
+                description: 'تصميم ملكي فريد مطلي بماء الذهب عيار 24 مع أقمشة مخملية فاخرة.'
             },
             {
-                id: '2',
-                title: 'مفروشات صالون الغيث العصرية الحديثة',
-                category: 'furniture',
-                price: '$175',
+                id: '2', title: 'مفروشات صالون الغيث العصرية الحديثة', category: 'مفروشات فاخرة', price: '$175',
                 mediaUrl: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=800',
-                mediaType: 'image',
-                description: 'مفروشات مودرن مصممة خصيصاً لتوفير أعلى درجات الراحة والفخامة مع تطريز يدوي دقيق.'
-            },
-            {
-                id: '3',
-                title: 'ديكور وصالون الأناقة المطلقة',
-                category: 'decor',
-                price: '$300',
-                mediaUrl: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=800',
-                mediaType: 'image',
-                description: 'ديكورات داخلية متكاملة مصممة بأحدث التقنيات السينمائية والإضاءات الساحرة لإبراز جمال المكان.'
+                description: 'مفروشات مودرن مصممة خصيصاً لتوفير أعلى درجات الراحة والفخامة.'
             }
         ];
-
-        let currentFilter = 'all';
 
         function loadProducts() {
             db.ref('products').on('value', snapshot => {
                 const data = snapshot.val();
                 const grid = document.getElementById('gallery-grid');
-                const adminList = document.getElementById('admin-products-list');
+                let products = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })) : defaultProducts;
                 
-                let products = [];
-                if (data) {
-                    Object.keys(data).forEach(key => {
-                        products.push({ id: key, ...data[key] });
-                    });
-                } else {
-                    products = defaultProducts;
-                }
-
                 grid.innerHTML = '';
-                const filtered = currentFilter === 'all' ? products : products.filter(p => p.category === currentFilter);
-                
-                filtered.forEach(p => {
-                    let mediaElement = '';
-                    if (p.mediaType && p.mediaType.includes('video')) {
-                        mediaElement = `<video src="${p.mediaUrl}" class="w-full h-72 object-cover group-hover:scale-105 transition duration-700" autoplay muted loop></video>`;
-                    } else {
-                        mediaElement = `<img src="${p.mediaUrl}" alt="${p.title}" class="w-full h-72 object-cover group-hover:scale-105 transition duration-700">`;
-                    }
-
-                    const card = `
-                        <div class="glass-panel rounded-2xl overflow-hidden border border-gold/20 group cinematic-shadow hover:border-gold transition">
-                            <div class="relative overflow-hidden cursor-pointer" onclick="openProductModal('${p.id}', '${encodeURIComponent(p.title)}', '${encodeURIComponent(p.description)}', '${p.price}', '${p.mediaUrl}', '${p.mediaType}')">
-                                ${mediaElement}
-                                <div class="absolute top-4 right-4 bg-black/80 border border-gold/40 text-gold px-3 py-1 rounded-full text-xs font-bold">
-                                    ${p.price}
+                products.forEach(p => {
+                    grid.innerHTML += `
+                        <div class="glass-panel" style="overflow: hidden; padding: 0;">
+                            <img src="${p.mediaUrl}" style="width: 100%; height: 250px; object-fit: cover;">
+                            <div style="padding: 20px;">
+                                <span class="gold-text" style="font-size: 11px; text-transform: uppercase;">${p.category}</span>
+                                <h3 style="font-family: 'Amiri'; font-size: 20px; margin: 8px 0; color: #fff;">${p.title}</h3>
+                                <p style="color: #aaa; font-size: 13px; margin-bottom: 15px;">${p.description || ''}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span class="gold-text" style="font-weight: bold; font-size: 18px;">${p.price}</span>
+                                    <a href="#contact" class="btn btn-outline" style="padding: 6px 15px; font-size: 12px;">اطلب تفصيل مشابه</a>
                                 </div>
-                            </div>
-                            <div class="p-6 space-y-3">
-                                <span class="text-xs text-gold uppercase tracking-widest">${p.category}</span>
-                                <h3 class="text-xl font-bold font-amiri text-white">${p.title}</h3>
-                                <p class="text-gray-400 text-sm line-clamp-2">${p.description || ''}</p>
-                                <button onclick="openProductModal('${p.id}', '${encodeURIComponent(p.title)}', '${encodeURIComponent(p.description)}', '${p.price}', '${p.mediaUrl}', '${p.mediaType}')" class="w-full mt-2 py-2.5 border border-gold text-gold rounded hover:bg-gold hover:text-black transition text-xs font-bold uppercase tracking-wider">
-                                    عرض التفاصيل وطلب الشراء
-                                </button>
                             </div>
                         </div>
                     `;
-                    grid.innerHTML += card;
-                });
-
-                adminList.innerHTML = '';
-                products.forEach(p => {
-                    adminList.innerHTML += `
-                        <tr class="border-b border-gold/10 hover:bg-neutral-900">
-                            <td class="py-3">
-                                <img src="${p.mediaUrl}" class="w-12 h-12 object-cover rounded border border-gold/30">
-                            </td>
-                            <td class="py-3 font-bold text-white">${p.title}</td>
-                            <td class="py-3 text-gold">${p.category}</td>
-                            <td class="py-3 text-gold">${p.price}</td>
-                            <td class="py-3">
-                                <button onclick="deleteProduct('${p.id}')" class="px-3 py-1 bg-red-900/50 border border-red-500 text-red-300 rounded hover:bg-red-900 text-xs">حذف</button>
-                            </td>
-                        </tr>
-                    `;
                 });
             });
-        }
-
-        function filterGallery(cat) {
-            currentFilter = cat;
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.classList.remove('bg-gold', 'text-black');
-                btn.classList.add('text-gold', 'border-gold/40');
-                if(btn.getAttribute('data-cat') === cat) {
-                    btn.classList.add('bg-gold', 'text-black');
-                    btn.classList.remove('text-gold', 'border-gold/40');
-                }
-            });
-            loadProducts();
         }
 
         function addNewProduct(e) {
@@ -812,32 +237,20 @@
 
             if (fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
-                reader.onload = function(uploadEvent) {
-                    const mediaUrl = uploadEvent.target.result;
-                    const mediaType = fileInput.files[0].type;
-
+                reader.onload = function(event) {
                     db.ref('products').push({
-                        title, category, price, description, mediaUrl, mediaType
-                    }, error => {
-                        if (error) {
-                            alert('حدث خطأ أثناء الرفع');
-                        } else {
-                            alert('تم إضافة المعروض بنجاح من جهازك!');
-                            document.getElementById('p-title').value = '';
-                            document.getElementById('p-price').value = '';
-                            document.getElementById('p-desc').value = '';
-                            document.getElementById('p-file').value = '';
-                            loadProducts();
-                        }
+                        title, category, price, description, mediaUrl: event.target.result, mediaType: fileInput.files[0].type
+                    }, () => {
+                        alert('تم إضافة المعروض بنجاح!');
+                        document.getElementById('p-title').value = '';
+                        document.getElementById('p-price').value = '';
+                        document.getElementById('p-desc').value = '';
+                        document.getElementById('p-file').value = '';
+                        closeAdminDashboard();
+                        loadProducts();
                     });
                 };
                 reader.readAsDataURL(fileInput.files[0]);
-            }
-        }
-
-        function deleteProduct(id) {
-            if (confirm('هل أنت متأكد من حذف هذا المعروض؟')) {
-                db.ref('products/' + id).remove();
             }
         }
 
@@ -847,173 +260,33 @@
             const phone = document.getElementById('inquiry-phone').value;
             const message = document.getElementById('inquiry-message').value;
 
-            db.ref('inquiries').push({
-                name, phone, message, date: new Date().toLocaleString()
-            }, error => {
-                if(error) {
-                    alert('حدث خطأ أثناء إرسال الطلب');
-                } else {
-                    alert('تم إرسال استفسارك وطلبك بنجاح إلى صالونات الغيث الملكي! سنتواصل معك قريباً.');
-                    document.getElementById('inquiry-name').value = '';
-                    document.getElementById('inquiry-phone').value = '';
-                    document.getElementById('inquiry-message').value = '';
-                }
+            db.ref('inquiries').push({ name, phone, message, date: new Date().toLocaleString() }, () => {
+                alert('تم إرسال استفسارك وطلبك بنجاح إلى صالونات الغيث الملكي!');
+                document.getElementById('inquiry-name').value = '';
+                document.getElementById('inquiry-phone').value = '';
+                document.getElementById('inquiry-message').value = '';
             });
         }
 
-        function loadInquiries() {
-            db.ref('inquiries').on('value', snapshot => {
-                const data = snapshot.val();
-                const list = document.getElementById('admin-inquiries-list');
-                list.innerHTML = '';
-                if(data) {
-                    Object.keys(data).forEach(key => {
-                        const inq = data[key];
-                        list.innerHTML += `
-                            <div class="bg-black border border-gold/20 p-4 rounded-xl space-y-2">
-                                <div class="flex justify-between text-xs text-gold">
-                                    <span>${inq.name} (${inq.phone})</span>
-                                    <span>${inq.date}</span>
-                                </div>
-                                <p class="text-sm text-gray-200">${inq.message}</p>
-                            </div>
-                        `;
-                    });
-                } else {
-                    list.innerHTML = `<p class="text-gray-400 text-sm">لا توجد استفسارات حالياً.</p>`;
-                }
-            });
-        }
-
-        function saveSiteSettings(e) {
-            e.preventDefault();
-            const phone = document.getElementById('set-phone').value;
-            const location = document.getElementById('set-loc').value;
-            const fb = document.getElementById('set-fb').value;
-            const insta = document.getElementById('set-insta').value;
-            const tiktok = document.getElementById('set-tiktok').value;
-
-            db.ref('settings').set({
-                phone, location, fb, insta, tiktok
-            }, error => {
-                if(error) {
-                    alert('حدث خطأ');
-                } else {
-                    alert('تم حفظ الإعدادات بنجاح!');
-                    loadSettings();
-                }
-            });
-        }
-
-        function loadSettings() {
-            db.ref('settings').on('value', snapshot => {
-                const s = snapshot.val();
-                if(s) {
-                    if(s.phone) {
-                        document.getElementById('display-phone').innerText = s.phone;
-                        document.getElementById('top-phone').innerHTML = `<i class="fas fa-phone-alt ml-1 text-gold"></i> ${s.phone}`;
-                    }
-                    if(s.location) {
-                        document.getElementById('top-loc').innerHTML = `<i class="fas fa-map-marker-alt ml-1 text-gold"></i> ${s.location}`;
-                    }
-                    if(s.fb) {
-                        document.getElementById('bar-fb').href = s.fb;
-                        document.getElementById('contact-fb').href = s.fb;
-                    }
-                    if(s.insta) {
-                        document.getElementById('bar-insta').href = s.insta;
-                        document.getElementById('contact-insta').href = s.insta;
-                    }
-                    if(s.tiktok) {
-                        document.getElementById('bar-tiktok').href = s.tiktok;
-                        document.getElementById('contact-tiktok').href = s.tiktok;
-                    }
-                }
-            });
-        }
-
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        }
-
-        function openProductModal(id, title, desc, price, mediaUrl, mediaType) {
-            const modal = document.getElementById('product-modal');
-            const content = document.getElementById('modal-content');
-            
-            let mediaHtml = `<img src="${mediaUrl}" class="w-full h-80 object-cover rounded-xl border border-gold/30">`;
-            if (mediaType && mediaType.includes('video')) {
-                mediaHtml = `<video src="${mediaUrl}" class="w-full h-80 object-cover rounded-xl border border-gold/30" controls autoplay></video>`;
-            }
-
-            content.innerHTML = `
-                ${mediaHtml}
-                <div class="flex justify-between items-center">
-                    <h3 class="text-2xl font-bold font-amiri text-gold">${decodeURIComponent(title)}</h3>
-                    <span class="text-lg font-bold text-white bg-gold/20 border border-gold px-3 py-1 rounded">${price}</span>
-                </div>
-                <p class="text-gray-300 text-sm leading-relaxed">${decodeURIComponent(desc)}</p>
-                <div class="flex gap-4 pt-4">
-                    <a href="#contact" onclick="closeProductModal()" class="flex-1 py-3 gold-bg text-black font-bold rounded text-center">طلب تفصيل هذا النموذج</a>
-                </div>
-            `;
-            modal.classList.remove('hidden');
-        }
-
-        function closeProductModal() {
-            document.getElementById('product-modal').classList.add('hidden');
-        }
-
-        function openAdminLogin() {
-            document.getElementById('admin-login-modal').classList.remove('hidden');
-        }
-
-        function closeAdminLogin() {
-            document.getElementById('admin-login-modal').classList.add('hidden');
-        }
+        function openAdminLogin() { document.getElementById('admin-login-modal').style.display = 'flex'; }
+        function closeAdminLogin() { document.getElementById('admin-login-modal').style.display = 'none'; }
+        function closeAdminDashboard() { document.getElementById('admin-dashboard-modal').style.display = 'none'; }
 
         function handleAdminLogin(e) {
             e.preventDefault();
-            const u = document.getElementById('admin-user').value;
-            const p = document.getElementById('admin-pass').value;
-            if (u === 'admin' && p === 'alghaith2026') {
+            const email = document.getElementById('admin-email').value;
+            const pass = document.getElementById('admin-pass').value;
+
+            auth.signInWithEmailAndPassword(email, pass).then(() => {
                 closeAdminLogin();
-                document.getElementById('admin-dashboard-modal').classList.remove('hidden');
-                loadInquiries();
-            } else {
-                alert('اسم المستخدم أو كلمة المرور غير صحيحة');
-            }
-        }
-
-        function closeAdminDashboard() {
-            document.getElementById('admin-dashboard-modal').classList.add('hidden');
-        }
-
-        function switchTab(tab) {
-            document.querySelectorAll('.admin-section').forEach(sec => sec.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('bg-gold', 'text-black');
-                btn.classList.add('bg-neutral-900', 'text-gold', 'border', 'border-gold/30');
+                document.getElementById('admin-dashboard-modal').style.display = 'flex';
+            }).catch(() => {
+                alert('خطأ في البريد أو كلمة المرور. تأكد من إدخال بيانات الأدمن الصحيحة.');
             });
-
-            if (tab === 'products') {
-                document.getElementById('section-products').classList.remove('hidden');
-                event.target.classList.add('bg-gold', 'text-black');
-                event.target.classList.remove('bg-neutral-900', 'text-gold');
-            } else if (tab === 'inquiries') {
-                document.getElementById('section-inquiries').classList.remove('hidden');
-                event.target.classList.add('bg-gold', 'text-black');
-                event.target.classList.remove('bg-neutral-900', 'text-gold');
-            } else if (tab === 'settings') {
-                document.getElementById('section-settings').classList.remove('hidden');
-                event.target.classList.add('bg-gold', 'text-black');
-                event.target.classList.remove('bg-neutral-900', 'text-gold');
-            }
         }
 
         window.onload = function() {
             loadProducts();
-            loadSettings();
         };
     </script>
 </body>

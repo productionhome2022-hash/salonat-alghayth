@@ -12,6 +12,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,7 +30,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .gold-bg { background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%); color: #000; }
         .glass-panel {
             background: rgba(20, 20, 20, 0.95);
             border: 1px solid rgba(212, 175, 55, 0.3);
@@ -164,9 +164,10 @@
                         <option value="ديكورات داخلية">ديكورات داخلية</option>
                     </select>
                     <input type="text" id="p-price" required placeholder="السعر ($)">
-                    <input type="file" id="p-file" accept="image/*" required style="padding: 10px;">
+                    <label style="font-size: 12px; color: #d4af37; display: block; margin-bottom: 5px;">اختر صورة أو فيديو من المعرض:</label>
+                    <input type="file" id="p-file" accept="image/*,video/*" required style="padding: 10px;">
                     <textarea id="p-desc" placeholder="الوصف التفصيلي"></textarea>
-                    <button type="submit" class="btn btn-gold" style="width: 100%;">حفظ وإضافة</button>
+                    <button type="submit" class="btn btn-gold" style="width: 100%;" id="upload-btn">رفع وحفظ المعروض</button>
                 </form>
             </div>
 
@@ -199,6 +200,7 @@
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
         const auth = firebase.auth();
+        const storage = firebase.storage();
 
         const defaultProducts = [
             {
@@ -208,15 +210,19 @@
             }
         ];
 
-        // دالة عرض المنتجات مباشرة لضمان عدم بقاء الصفحة فارغة
         function renderProducts(products) {
             const grid = document.getElementById('gallery-grid');
             if (!grid) return;
             grid.innerHTML = '';
             products.forEach(p => {
+                let mediaElement = `<img src="${p.mediaUrl}" style="width: 100%; height: 220px; object-fit: cover;">`;
+                if (p.mediaType && p.mediaType.includes('video')) {
+                    mediaElement = `<video src="${p.mediaUrl}" controls style="width: 100%; height: 220px; object-fit: cover;"></video>`;
+                }
+
                 grid.innerHTML += `
                     <div class="glass-panel" style="overflow: hidden; padding: 0;">
-                        <img src="${p.mediaUrl}" style="width: 100%; height: 220px; object-fit: cover;">
+                        ${mediaElement}
                         <div style="padding: 15px;">
                             <span class="gold-text" style="font-size: 11px;">${p.category || ''}</span>
                             <h3 style="font-family: 'Amiri'; font-size: 18px; margin: 5px 0; color: #fff;">${p.title}</h3>
@@ -231,7 +237,6 @@
             });
         }
 
-        // عرض المنتجات الافتراضية فوراً عند تحميل الصفحة
         renderProducts(defaultProducts);
 
         function loadProducts() {
@@ -241,8 +246,6 @@
                     const products = Object.keys(data).map(k => ({ id: k, ...data[k] }));
                     renderProducts(products);
                 }
-            }, err => {
-                console.log('Using default products');
             });
         }
 
@@ -297,19 +300,42 @@
             const price = document.getElementById('p-price').value;
             const description = document.getElementById('p-desc').value;
             const fileInput = document.getElementById('p-file');
+            const uploadBtn = document.getElementById('upload-btn');
 
-            if (fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(evt) {
+            if (!fileInput.files || !fileInput.files[0]) {
+                alert('الرجاء اختيار ملف (صورة أو فيديو)');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            uploadBtn.innerText = 'جاري الرفع والحفظ...';
+            uploadBtn.disabled = true;
+
+            // رفع الملف إلى Firebase Storage
+            const storageRef = storage.ref('media/' + Date.now() + '_' + file.name);
+            const uploadTask = storageRef.put(file);
+
+            uploadTask.on('state_changed', null, (error) => {
+                alert('فشل الرفع: ' + error.message);
+                uploadBtn.innerText = 'رفع وحفظ المعروض';
+                uploadBtn.disabled = false;
+            }, () => {
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                    // حفظ رابط الملف وبيانات المنتج في Realtime Database
                     db.ref('products').push({
-                        title, category, price, description, mediaUrl: evt.target.result
+                        title, category, price, description, mediaUrl: downloadURL, mediaType: file.type
                     }, () => {
-                        alert('تم إضافة المعروض بنجاح!');
+                        alert('تم رفع المعروض وحفظه بنجاح!');
+                        document.getElementById('p-title').value = '';
+                        document.getElementById('p-price').value = '';
+                        document.getElementById('p-desc').value = '';
+                        document.getElementById('p-file').value = '';
+                        uploadBtn.innerText = 'رفع وحفظ المعروض';
+                        uploadBtn.disabled = false;
                         closeAdminDashboard();
                     });
-                };
-                reader.readAsDataURL(fileInput.files[0]);
-            }
+                });
+            });
         }
 
         function saveSiteSettings(e) {

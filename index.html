@@ -87,7 +87,6 @@
                 <span style="font-size: 9px; color: #888; letter-spacing: 2px;">AL-GHAITH SALONS</span>
             </div>
         </div>
-        <!-- زر لوحة التحكم مرتبط بدالة عامة ومباشرة -->
         <button type="button" onclick="openAdminLogin()" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;"><i class="fas fa-lock"></i> لوحة التحكم</button>
     </header>
 
@@ -187,14 +186,9 @@
 
     <!-- JavaScript Logic -->
     <script>
-        // دوال عامة لفتح وإغلاق النوافذ تعمل بشكل فوري
         window.openAdminLogin = function() {
             const modal = document.getElementById('admin-login-modal');
-            if (modal) {
-                modal.style.display = 'flex';
-            } else {
-                alert('خطأ: نافذة تسجيل الدخول غير موجودة');
-            }
+            if (modal) modal.style.display = 'flex';
         };
 
         window.closeAdminLogin = function() {
@@ -227,7 +221,6 @@
             }
         };
 
-        // إعدادات Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAQwUbMVlaygM5K0G6H8Gu3rjstoZkDO0I",
             authDomain: "al-ghaith-487f3.firebaseapp.com",
@@ -289,6 +282,8 @@
                     const products = Object.keys(data).map(k => ({ id: k, ...data[k] }));
                     renderProducts(products);
                 }
+            }, error => {
+                console.error("Error loading products:", error);
             });
         }
 
@@ -308,10 +303,11 @@
                     if (document.getElementById('set-insta')) document.getElementById('set-insta').value = s.insta || '';
                     if (document.getElementById('set-tiktok')) document.getElementById('set-tiktok').value = s.tiktok || '';
                 }
+            }, error => {
+                console.error("Error loading settings:", error);
             });
         }
 
-        // تسجيل الدخول
         window.handleAdminLogin = function(e) {
             e.preventDefault();
             const email = document.getElementById('admin-email').value;
@@ -322,11 +318,10 @@
                 const d = document.getElementById('admin-dashboard-modal');
                 if (d) d.style.display = 'flex';
             }).catch(err => {
-                alert('خطأ في البيانات! تأكد من البريد وكلمة المرور.');
+                alert('خطأ في البيانات أو الصلاحيات: ' + err.message);
             });
         };
 
-        // إضافة معروض جديد (صور وفيديوهات مع معالجة ذكية)
         window.addNewProduct = function(e) {
             e.preventDefault();
             const title = document.getElementById('p-title').value;
@@ -354,8 +349,8 @@
                     img.onload = function() {
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
-                        const MAX_WIDTH = 500;
-                        const MAX_HEIGHT = 500;
+                        const MAX_WIDTH = 400;
+                        const MAX_HEIGHT = 400;
                         let width = img.width;
                         let height = img.height;
 
@@ -369,14 +364,14 @@
                         canvas.height = height;
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.5);
                         saveProductToDB(title, category, price, description, compressedDataUrl, 'image', uploadBtn);
                     };
                 };
                 reader.readAsDataURL(file);
             } else if (file.type.startsWith('video/')) {
-                if (file.size > 3 * 1024 * 1024) {
-                    alert('حجم الفيديو كبير جداً. يرجى اختيار فيديو أصغر من 3 ميجابايت.');
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('حجم الفيديو كبير جداً. يرجى اختيار فيديو أصغر من 2 ميجابايت.');
                     uploadBtn.innerText = 'حفظ وإضافة';
                     uploadBtn.disabled = false;
                     return;
@@ -397,7 +392,7 @@
                 title, category, price, description, mediaUrl, mediaType
             }, (error) => {
                 if (error) {
-                    alert('حدث خطأ أثناء الحفظ: ' + error.message);
+                    alert('خطأ في الحفظ: ' + error.message);
                 } else {
                     alert('تم إضافة وحفظ المعروض بنجاح!');
                     document.getElementById('p-title').value = '';
@@ -419,9 +414,13 @@
             const insta = document.getElementById('set-insta').value;
             const tiktok = document.getElementById('set-tiktok').value;
 
-            db.ref('settings').set({ phone, location, fb, insta, tiktok }, () => {
-                alert('تم تحديث إعدادات الموقع بنجاح!');
-                closeAdminDashboard();
+            db.ref('settings').set({ phone, location, fb, insta, tiktok }, (error) => {
+                if (error) {
+                    alert('خطأ في حفظ الإعدادات: ' + error.message);
+                } else {
+                    alert('تم تحديث إعدادات الموقع بنجاح!');
+                    closeAdminDashboard();
+                }
             });
         };
 

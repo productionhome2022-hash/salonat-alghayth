@@ -32,9 +32,9 @@
         .gold-bg { background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%); color: #000; }
         .gold-border { border: 1px solid rgba(212, 175, 55, 0.3); }
         .glass-panel {
-            background: rgba(20, 20, 20, 0.85);
+            background: rgba(20, 20, 20, 0.95);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(212, 175, 55, 0.25);
+            border: 1px solid rgba(212, 175, 55, 0.3);
             border-radius: 16px;
             padding: 24px;
         }
@@ -63,19 +63,23 @@
             width: 100%; background: #000; border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 8px; padding: 12px; color: #fff; margin-bottom: 15px; font-family: 'Tajawal';
         }
         .modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; overflow-y: auto;
         }
+        .tab-btn {
+            padding: 10px 20px; border-radius: 8px; border: 1px solid rgba(212,175,55,0.4); background: #111; color: #d4af37; cursor: pointer; font-weight: bold; font-family: 'Tajawal';
+        }
+        .tab-btn.active { background: #d4af37; color: #000; }
     </style>
 </head>
 <body>
 
     <!-- Top Info Bar -->
     <div style="background: #000; border-bottom: 1px solid rgba(212,175,55,0.2); padding: 8px 20px; font-size: 12px; display: flex; justify-content: space-between;">
-        <span class="gold-text"><i class="fas fa-map-marker-alt"></i> الجزائر (العاصمة - وهران - تلمسان) | هاتف: +213 555 000 000</span>
-        <div style="display: flex; gap: 15px;">
-            <a href="#" class="gold-text"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="gold-text"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="gold-text"><i class="fab fa-tiktok"></i></a>
+        <span id="top-loc-text" class="gold-text"><i class="fas fa-map-marker-alt"></i> الجزائر (العاصمة - وهران - تلمسان) | هاتف: <span id="top-phone-text">+213 555 000 000</span></span>
+        <div style="display: flex; gap: 15px;" id="top-social-bar">
+            <a href="#" id="link-fb" class="gold-text" target="_blank"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" id="link-insta" class="gold-text" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="#" id="link-tiktok" class="gold-text" target="_blank"><i class="fab fa-tiktok"></i></a>
         </div>
     </div>
 
@@ -115,10 +119,7 @@
             <h2 class="gold-gradient" style="font-family: 'Amiri'; font-size: 32px; margin-top: 10px;">معرض صالون الغيث الملكي والمفروشات</h2>
             <div style="width: 80px; height: 2px; background: #d4af37; margin: 15px auto;"></div>
         </div>
-
-        <div id="gallery-grid" class="grid">
-            <!-- Dynamic Products -->
-        </div>
+        <div id="gallery-grid" class="grid"></div>
     </section>
 
     <!-- Contact Section -->
@@ -148,146 +149,8 @@
     </div>
 
     <!-- Admin Dashboard Modal -->
-    <div id="admin-dashboard-modal" class="modal" style="justify-content: flex-start; overflow-y: auto;">
-        <div class="glass-panel" style="max-width: 800px; width: 100%; margin: 40px auto;">
+    <div id="admin-dashboard-modal" class="modal">
+        <div class="glass-panel" style="max-width: 800px; width: 100%; margin: 20px auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 15px; margin-bottom: 20px;">
-                <h2 class="gold-text" style="font-family: 'Amiri';">لوحة تحكم صالونات الغيث الملكي</h2>
-                <button onclick="closeAdminDashboard()" class="btn btn-outline" style="padding: 5px 15px; font-size: 12px;">إغلاق</button>
-            </div>
-
-            <h3 class="gold-text" style="margin-bottom: 15px;">إضافة معروض جديد (رفع من الجهاز)</h3>
-            <form onsubmit="addNewProduct(event)">
-                <input type="text" id="p-title" required placeholder="عنوان المعروض">
-                <select id="p-cat">
-                    <option value="salons">صالونات ملكية</option>
-                    <option value="furniture">مفروشات فاخرة</option>
-                    <option value="decor">ديكورات داخلية</option>
-                </select>
-                <input type="text" id="p-price" required placeholder="السعر ($)">
-                <input type="file" id="p-file" accept="image/*,video/*" required style="padding: 10px;">
-                <textarea id="p-desc" placeholder="الوصف التفصيلي"></textarea>
-                <button type="submit" class="btn btn-gold" style="width: 100%;">إضافة المعروض للمنصة</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- JavaScript Logic -->
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAQwUbMVlaygM5K0G6H8Gu3rjstoZkDO0I",
-            authDomain: "al-ghaith-487f3.firebaseapp.com",
-            databaseURL: "https://al-ghaith-487f3-default-rtdb.firebaseio.com",
-            projectId: "al-ghaith-487f3",
-            storageBucket: "al-ghaith-487f3.firebasestorage.app",
-            messagingSenderId: "425276776029",
-            appId: "1:425276776029:web:81d422d67d7ddc9316b7b4",
-            measurementId: "G-TDBEE9L84V"
-        };
-        
-        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-        const db = firebase.database();
-        const auth = firebase.auth();
-
-        let defaultProducts = [
-            {
-                id: '1', title: 'صالون الغيث الملكي المذهب الفاخر', category: 'صالونات ملكية', price: '$250',
-                mediaUrl: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=800',
-                description: 'تصميم ملكي فريد مطلي بماء الذهب عيار 24 مع أقمشة مخملية فاخرة.'
-            },
-            {
-                id: '2', title: 'مفروشات صالون الغيث العصرية الحديثة', category: 'مفروشات فاخرة', price: '$175',
-                mediaUrl: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=800',
-                description: 'مفروشات مودرن مصممة خصيصاً لتوفير أعلى درجات الراحة والفخامة.'
-            }
-        ];
-
-        function loadProducts() {
-            db.ref('products').on('value', snapshot => {
-                const data = snapshot.val();
-                const grid = document.getElementById('gallery-grid');
-                let products = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })) : defaultProducts;
-                
-                grid.innerHTML = '';
-                products.forEach(p => {
-                    grid.innerHTML += `
-                        <div class="glass-panel" style="overflow: hidden; padding: 0;">
-                            <img src="${p.mediaUrl}" style="width: 100%; height: 250px; object-fit: cover;">
-                            <div style="padding: 20px;">
-                                <span class="gold-text" style="font-size: 11px; text-transform: uppercase;">${p.category}</span>
-                                <h3 style="font-family: 'Amiri'; font-size: 20px; margin: 8px 0; color: #fff;">${p.title}</h3>
-                                <p style="color: #aaa; font-size: 13px; margin-bottom: 15px;">${p.description || ''}</p>
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <span class="gold-text" style="font-weight: bold; font-size: 18px;">${p.price}</span>
-                                    <a href="#contact" class="btn btn-outline" style="padding: 6px 15px; font-size: 12px;">اطلب تفصيل مشابه</a>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-            });
-        }
-
-        function addNewProduct(e) {
-            e.preventDefault();
-            const title = document.getElementById('p-title').value;
-            const category = document.getElementById('p-cat').value;
-            const price = document.getElementById('p-price').value;
-            const description = document.getElementById('p-desc').value;
-            const fileInput = document.getElementById('p-file');
-
-            if (fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    db.ref('products').push({
-                        title, category, price, description, mediaUrl: event.target.result, mediaType: fileInput.files[0].type
-                    }, () => {
-                        alert('تم إضافة المعروض بنجاح!');
-                        document.getElementById('p-title').value = '';
-                        document.getElementById('p-price').value = '';
-                        document.getElementById('p-desc').value = '';
-                        document.getElementById('p-file').value = '';
-                        closeAdminDashboard();
-                        loadProducts();
-                    });
-                };
-                reader.readAsDataURL(fileInput.files[0]);
-            }
-        }
-
-        function submitCustomerInquiry(e) {
-            e.preventDefault();
-            const name = document.getElementById('inquiry-name').value;
-            const phone = document.getElementById('inquiry-phone').value;
-            const message = document.getElementById('inquiry-message').value;
-
-            db.ref('inquiries').push({ name, phone, message, date: new Date().toLocaleString() }, () => {
-                alert('تم إرسال استفسارك وطلبك بنجاح إلى صالونات الغيث الملكي!');
-                document.getElementById('inquiry-name').value = '';
-                document.getElementById('inquiry-phone').value = '';
-                document.getElementById('inquiry-message').value = '';
-            });
-        }
-
-        function openAdminLogin() { document.getElementById('admin-login-modal').style.display = 'flex'; }
-        function closeAdminLogin() { document.getElementById('admin-login-modal').style.display = 'none'; }
-        function closeAdminDashboard() { document.getElementById('admin-dashboard-modal').style.display = 'none'; }
-
-        function handleAdminLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('admin-email').value;
-            const pass = document.getElementById('admin-pass').value;
-
-            auth.signInWithEmailAndPassword(email, pass).then(() => {
-                closeAdminLogin();
-                document.getElementById('admin-dashboard-modal').style.display = 'flex';
-            }).catch(() => {
-                alert('خطأ في البريد أو كلمة المرور. تأكد من إدخال بيانات الأدمن الصحيحة.');
-            });
-        }
-
-        window.onload = function() {
-            loadProducts();
-        };
-    </script>
-</body>
-</html>
+                <h2 class="gold-text" style="font-family: 'Amiri'; font-size: 20px;">لوحة تحكم صالونات الغيث الملكي</h2>
+                <button onclick="closeAdminDashboard()" class="btn btn-

@@ -42,17 +42,17 @@
         }
         header {
             position: sticky; top: 0; z-index: 100;
-            background: rgba(11, 11, 11, 0.95);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            background: rgba(11, 11, 11, 0.98);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.4);
             display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 20px;
+            padding: 12px 18px;
         }
         .hero {
             padding: 60px 20px; text-align: center; position: relative;
             background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1200') center/cover no-repeat;
         }
         .btn {
-            display: inline-block; padding: 12px 24px; border-radius: 6px; font-weight: bold; text-decoration: none; cursor: pointer; transition: 0.3s; font-family: 'Tajawal';
+            display: inline-block; padding: 10px 20px; border-radius: 6px; font-weight: bold; text-decoration: none; cursor: pointer; transition: 0.3s; font-family: 'Tajawal';
         }
         .btn-gold { background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%); color: #000; border: none; }
         .btn-outline { border: 1px solid #d4af37; color: #d4af37; background: transparent; }
@@ -74,7 +74,7 @@
 
         .lang-btn {
             background: #111; border: 1px solid rgba(212, 175, 55, 0.5); color: #d4af37;
-            padding: 3px 7px; border-radius: 12px; font-size: 11px; cursor: pointer; font-weight: bold; transition: 0.3s;
+            padding: 3px 6px; border-radius: 10px; font-size: 10px; cursor: pointer; font-weight: bold; transition: 0.3s;
         }
         .lang-btn.active, .lang-btn:hover {
             background: #d4af37; color: #000;
@@ -84,12 +84,12 @@
 <body id="main-body">
 
     <!-- Top Info & Language Bar -->
-    <div style="background: #000; border-bottom: 1px solid rgba(212,175,55,0.2); padding: 8px 15px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-        <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+    <div style="background: #000; border-bottom: 1px solid rgba(212,175,55,0.2); padding: 6px 15px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
             <span class="gold-text"><i class="fas fa-map-marker-alt"></i> <span id="top-loc">الجزائر (العاصمة - وهران - تلمسان)</span> | <span data-i18n="phone_label">هاتف</span>: <span id="top-phone">+213 555 000 000</span></span>
             
             <!-- Language Switcher -->
-            <div style="display: flex; gap: 4px; align-items: center; border-right: 1px solid rgba(212,175,55,0.3); padding-right: 10px; border-left: 1px solid rgba(212,175,55,0.3); padding-left: 10px;">
+            <div style="display: flex; gap: 3px; align-items: center; border-right: 1px solid rgba(212,175,55,0.3); padding-right: 8px; border-left: 1px solid rgba(212,175,55,0.3); padding-left: 8px;">
                 <button type="button" onclick="setLanguage('ar')" class="lang-btn active" id="lang-ar">AR</button>
                 <button type="button" onclick="setLanguage('en')" class="lang-btn" id="lang-en">EN</button>
                 <button type="button" onclick="setLanguage('fr')" class="lang-btn" id="lang-fr">FR</button>
@@ -97,7 +97,7 @@
             </div>
         </div>
 
-        <div style="display: flex; gap: 15px; align-items: center;">
+        <div style="display: flex; gap: 12px; align-items: center;">
             <a href="#" id="link-whatsapp" class="gold-text" target="_blank" style="display:none;"><i class="fab fa-whatsapp"></i></a>
             <a href="#" id="link-fb" class="gold-text" target="_blank" style="display:none;"><i class="fab fa-facebook-f"></i></a>
             <a href="#" id="link-insta" class="gold-text" target="_blank" style="display:none;"><i class="fab fa-instagram"></i></a>
@@ -105,26 +105,26 @@
         </div>
     </div>
 
-    <!-- Header -->
+    <!-- Header (شعار كبير وفخم + اسم بارز + زر تحكم مصغر وأنيق) -->
     <header>
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <!-- حاوية شعار مكبرة وواضحة تعكس الفخامة الملكية -->
-            <div style="width: 65px; height: 65px; border-radius: 50%; border: 2px solid #d4af37; overflow: hidden; background: #000; box-shadow: 0 0 10px rgba(212,175,55,0.4);">
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="width: 75px; height: 75px; border-radius: 50%; border: 2.5px solid #d4af37; overflow: hidden; background: #000; box-shadow: 0 0 15px rgba(212,175,55,0.5); flex-shrink: 0;">
+                <!-- شعار مفروشات الغيث الملكية المباشر والواضح -->
                 <img src="https://i.postimg.cc/1X9N6t8Z/watermarked-img-2851945285533551490.jpg" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=150'">
             </div>
             <div>
-                <h2 class="gold-gradient" style="font-family: 'Amiri'; font-size: 19px;" data-i18n="brand_title">مفروشات الغيث الملكية</h2>
-                <span style="font-size: 9px; color: #888; letter-spacing: 2px;">AL-GHAITH ROYAL FURNITURE</span>
+                <h1 class="gold-gradient" style="font-family: 'Amiri'; font-size: 20px; font-weight: bold; line-height: 1.3;" data-i18n="brand_title">مفروشات الغيث الملكية</h1>
+                <span style="font-size: 9px; color: #aaa; letter-spacing: 2.5px; font-weight: 600;">AL-GHAITH ROYAL FURNITURE</span>
             </div>
         </div>
-        <button type="button" onclick="openAdminLogin()" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;"><i class="fas fa-lock"></i> <span data-i18n="admin_btn">لوحة التحكم</span></button>
+        <button type="button" onclick="openAdminLogin()" class="btn btn-outline" style="padding: 5px 10px; font-size: 11px; border-radius: 4px;"><i class="fas fa-lock"></i> <span data-i18n="admin_btn">لوحة التحكم</span></button>
     </header>
 
     <!-- Hero Section -->
     <section class="hero">
         <div style="max-width: 800px; margin: 0 auto;">
             <span style="border: 1px solid rgba(212,175,55,0.5); padding: 4px 12px; border-radius: 20px; font-size: 11px; color: #d4af37; background: rgba(0,0,0,0.6);" data-i18n="badge_text">معارض الورشة الملكية في الجزائر</span>
-            <h1 class="gold-gradient" style="font-family: 'Amiri'; font-size: 32px; margin: 15px 0;" data-i18n="hero_title">مفروشات الغيث الملكية للديكور والأثاث</h1>
+            <h2 class="gold-gradient" style="font-family: 'Amiri'; font-size: 30px; margin: 15px 0;" data-i18n="hero_title">مفروشات الغيث الملكية للديكور والأثاث</h2>
             <p style="color: #ccc; margin-bottom: 25px; font-size: 14px; line-height: 1.6;" data-i18n="hero_desc">نصمم ونصنع أفخم الصالونات والمفروشات العالمية حسب الطلب وفق أعلى معايير الجودة والذوق الرفيع.</p>
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                 <a href="#gallery" class="btn btn-gold" data-i18n="btn_explore">استكشف المعرض الملكي</a>
@@ -531,4 +531,248 @@
             });
         }
 
-        window.deleteProduct = function(id
+        window.deleteProduct = function(id) {
+            if (confirm('هل أنت متأكد من حذف هذا المعروض نهائياً؟')) {
+                db.ref('products/' + id).remove().then(() => {
+                    alert('تم حذف المعروض بنجاح!');
+                }).catch(err => {
+                    alert('خطأ أثناء الحذف: ' + err.message);
+                });
+            }
+        };
+
+        function loadProducts() {
+            db.ref('products').on('value', snapshot => {
+                const data = snapshot.val();
+                if (data) {
+                    const products = Object.keys(data).map(k => ({ id: k, ...data[k] }));
+                    renderProducts(products);
+                } else {
+                    renderProducts(defaultProducts);
+                }
+            });
+        }
+
+        function loadSettings() {
+            db.ref('settings').on('value', snapshot => {
+                const s = snapshot.val();
+                if (s) {
+                    if (s.phone && document.getElementById('top-phone')) document.getElementById('top-phone').innerText = s.phone;
+                    if (s.location && document.getElementById('top-loc')) document.getElementById('top-loc').innerText = s.location;
+                    
+                    const waEl = document.getElementById('link-whatsapp');
+                    if (s.whatsapp && waEl) {
+                        waEl.href = s.whatsapp.startsWith('http') ? s.whatsapp : 'https://wa.me/' + s.whatsapp;
+                        waEl.style.display = 'inline-block';
+                    } else if (waEl) {
+                        waEl.style.display = 'none';
+                    }
+
+                    const fbEl = document.getElementById('link-fb');
+                    if (s.fb && fbEl) {
+                        fbEl.href = s.fb;
+                        fbEl.style.display = 'inline-block';
+                    } else if (fbEl) {
+                        fbEl.style.display = 'none';
+                    }
+
+                    const instaEl = document.getElementById('link-insta');
+                    if (s.insta && instaEl) {
+                        instaEl.href = s.insta;
+                        instaEl.style.display = 'inline-block';
+                    } else if (instaEl) {
+                        instaEl.style.display = 'none';
+                    }
+
+                    const tiktokEl = document.getElementById('link-tiktok');
+                    if (s.tiktok && tiktokEl) {
+                        tiktokEl.href = s.tiktok;
+                        tiktokEl.style.display = 'inline-block';
+                    } else if (tiktokEl) {
+                        tiktokEl.style.display = 'none';
+                    }
+
+                    if (document.getElementById('set-phone')) document.getElementById('set-phone').value = s.phone || '';
+                    if (document.getElementById('set-whatsapp')) document.getElementById('set-whatsapp').value = s.whatsapp || '';
+                    if (document.getElementById('set-loc')) document.getElementById('set-loc').value = s.location || '';
+                    if (document.getElementById('set-fb')) document.getElementById('set-fb').value = s.fb || '';
+                    if (document.getElementById('set-insta')) document.getElementById('set-insta').value = s.insta || '';
+                    if (document.getElementById('set-tiktok')) document.getElementById('set-tiktok').value = s.tiktok || '';
+                }
+            });
+        }
+
+        function loadInquiries() {
+            db.ref('inquiries').on('value', snapshot => {
+                const data = snapshot.val();
+                const container = document.getElementById('inquiries-list');
+                const countBadge = document.getElementById('inquiry-count');
+                if (!container) return;
+
+                container.innerHTML = '';
+                if (!data) {
+                    container.innerHTML = '<p style="color: #888; text-align: center; padding: 20px;">لا توجد طلبات أو استفسارات حالياً.</p>';
+                    if (countBadge) countBadge.innerText = '0';
+                    return;
+                }
+
+                const keys = Object.keys(data);
+                if (countBadge) countBadge.innerText = keys.length;
+
+                keys.reverse().forEach(k => {
+                    const req = data[k];
+                    const cleanPhone = req.phone ? req.phone.replace(/[^0-9+]/g, '') : '';
+                    container.innerHTML += `
+                        <div style="background: rgba(0,0,0,0.6); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px; padding: 12px; margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px;">
+                                <span class="gold-text" style="font-weight: bold;">${req.name}</span>
+                                <span style="color: #888; font-size: 11px;">${req.date || ''}</span>
+                            </div>
+                            <p style="font-size: 13px; color: #ddd; margin-bottom: 8px;"><b>الهاتف:</b> ${req.phone}</p>
+                            <p style="font-size: 13px; color: #fff; background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; margin-bottom: 10px;"><b>الطلب:</b> ${req.message}</p>
+                            <a href="https://wa.me/${cleanPhone}?text=مرحباً بك يا ${encodeURIComponent(req.name)}، بخصوص طلبك في مفروشات الغيث الملكية:" target="_blank" class="btn btn-gold" style="padding: 6px 12px; font-size: 11px; text-align: center; display: block;">الرد عبر واتساب</a>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        window.handleAdminLogin = function(e) {
+            e.preventDefault();
+            const email = document.getElementById('admin-email').value;
+            const pass = document.getElementById('admin-pass').value;
+
+            auth.signInWithEmailAndPassword(email, pass).then(() => {
+                closeAdminLogin();
+                const d = document.getElementById('admin-dashboard-modal');
+                if (d) d.style.display = 'flex';
+            }).catch(err => {
+                alert('خطأ في البيانات: ' + err.message);
+            });
+        };
+
+        window.addNewProduct = function(e) {
+            e.preventDefault();
+            const title = document.getElementById('p-title').value;
+            const category = document.getElementById('p-cat').value;
+            const price = document.getElementById('p-price').value;
+            const description = document.getElementById('p-desc').value;
+            const fileInput = document.getElementById('p-file');
+            const uploadBtn = document.getElementById('upload-btn');
+
+            if (!fileInput.files || !fileInput.files[0]) {
+                alert('الرجاء اختيار ملف (صورة أو فيديو)');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            uploadBtn.innerText = 'جاري المعالجة والحفظ...';
+            uploadBtn.disabled = true;
+
+            const reader = new FileReader();
+
+            if (file.type.startsWith('image/')) {
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const MAX_WIDTH = 600;
+                        const MAX_HEIGHT = 600;
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                        } else {
+                            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                        saveProductToDB(title, category, price, description, compressedDataUrl, 'image', uploadBtn);
+                    };
+                };
+                reader.readAsDataURL(file);
+            } else if (file.type.startsWith('video/')) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('حجم الفيديو كبير جداً. يرجى اختيار فيديو أصغر من 2 ميجابايت.');
+                    uploadBtn.innerText = 'حفظ وإضافة';
+                    uploadBtn.disabled = false;
+                    return;
+                }
+                reader.onload = function(event) {
+                    saveProductToDB(title, category, price, description, event.target.result, 'video', uploadBtn);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('نوع الملف غير مدعوم.');
+                uploadBtn.innerText = 'حفظ وإضافة';
+                uploadBtn.disabled = false;
+            }
+        };
+
+        function saveProductToDB(title, category, price, description, mediaUrl, mediaType, uploadBtn) {
+            db.ref('products').push({
+                title, category, price, description, mediaUrl, mediaType
+            }, (error) => {
+                if (error) {
+                    alert('خطأ في الحفظ: ' + error.message);
+                } else {
+                    alert('تم إضافة وحفظ المعروض بنجاح!');
+                    document.getElementById('p-title').value = '';
+                    document.getElementById('p-price').value = '';
+                    document.getElementById('p-desc').value = '';
+                    document.getElementById('p-file').value = '';
+                    closeAdminDashboard();
+                }
+                uploadBtn.innerText = 'حفظ وإضافة';
+                uploadBtn.disabled = false;
+            });
+        }
+
+        window.saveSiteSettings = function(e) {
+            e.preventDefault();
+            const phone = document.getElementById('set-phone').value;
+            const whatsapp = document.getElementById('set-whatsapp').value;
+            const location = document.getElementById('set-loc').value;
+            const fb = document.getElementById('set-fb').value;
+            const insta = document.getElementById('set-insta').value;
+            const tiktok = document.getElementById('set-tiktok').value;
+
+            db.ref('settings').set({ phone, whatsapp, location, fb, insta, tiktok }, (error) => {
+                if (error) {
+                    alert('خطأ في حفظ الإعدادات: ' + error.message);
+                } else {
+                    alert('تم تحديث إعدادات الموقع بنجاح!');
+                    closeAdminDashboard();
+                }
+            });
+        };
+
+        window.submitCustomerInquiry = function(e) {
+            e.preventDefault();
+            const name = document.getElementById('inquiry-name').value;
+            const phone = document.getElementById('inquiry-phone').value;
+            const message = document.getElementById('inquiry-message').value;
+
+            db.ref('inquiries').push({ name, phone, message, date: new Date().toLocaleString() }, () => {
+                alert('تم إرسال طلبك بنجاح! سيتم مراجعته من قبل الإدارة.');
+                document.getElementById('inquiry-name').value = '';
+                document.getElementById('inquiry-phone').value = '';
+                document.getElementById('inquiry-message').value = '';
+            });
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+            loadSettings();
+            loadInquiries();
+        });
+    </script>
+</body>
+</html>

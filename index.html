@@ -87,7 +87,7 @@
                 <span style="font-size: 9px; color: #888; letter-spacing: 2px;">AL-GHAITH SALONS</span>
             </div>
         </div>
-        <!-- تم ربط الزر مباشرة بدالة آمنة -->
+        <!-- زر لوحة التحكم مرتبط بدالة عامة ومباشرة -->
         <button type="button" onclick="openAdminLogin()" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;"><i class="fas fa-lock"></i> لوحة التحكم</button>
     </header>
 
@@ -185,14 +185,264 @@
         </div>
     </div>
 
-    <!-- JavaScript Logic (Global Functions) -->
+    <!-- JavaScript Logic -->
     <script>
-        // الدوال العامة للتحكم بالواجهة (تعمل بشكل فوري ومباشر)
+        // دوال عامة لفتح وإغلاق النوافذ تعمل بشكل فوري
         window.openAdminLogin = function() {
             const modal = document.getElementById('admin-login-modal');
-            if (modal) modal.style.display = 'flex';
+            if (modal) {
+                modal.style.display = 'flex';
+            } else {
+                alert('خطأ: نافذة تسجيل الدخول غير موجودة');
+            }
         };
 
         window.closeAdminLogin = function() {
             const modal = document.getElementById('admin-login-modal');
             if (modal) modal.style.display = 'none';
+        };
+
+        window.closeAdminDashboard = function() {
+            const modal = document.getElementById('admin-dashboard-modal');
+            if (modal) modal.style.display = 'none';
+        };
+
+        window.switchTab = function(tab) {
+            const pC = document.getElementById('tab-content-products');
+            const sC = document.getElementById('tab-content-settings');
+            const pB = document.getElementById('tab-btn-products');
+            const sB = document.getElementById('tab-btn-settings');
+            if (!pC || !sC) return;
+
+            if (tab === 'products') {
+                pC.style.display = 'block';
+                sC.style.display = 'none';
+                if (pB) pB.classList.add('active');
+                if (sB) sB.classList.remove('active');
+            } else {
+                pC.style.display = 'none';
+                sC.style.display = 'block';
+                if (sB) sB.classList.add('active');
+                if (pB) pB.classList.remove('active');
+            }
+        };
+
+        // إعدادات Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAQwUbMVlaygM5K0G6H8Gu3rjstoZkDO0I",
+            authDomain: "al-ghaith-487f3.firebaseapp.com",
+            databaseURL: "https://al-ghaith-487f3-default-rtdb.firebaseio.com",
+            projectId: "al-ghaith-487f3",
+            storageBucket: "al-ghaith-487f3.firebasestorage.app",
+            messagingSenderId: "425276776029",
+            appId: "1:425276776029:web:81d422d67d7ddc9316b7b4",
+            measurementId: "G-TDBEE9L84V"
+        };
+        
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+        const auth = firebase.auth();
+
+        const defaultProducts = [
+            {
+                id: '1', title: 'صالون الغيث الملكي المذهب الفاخر', category: 'صالونات ملكية', price: '$250',
+                mediaUrl: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=800',
+                mediaType: 'image',
+                description: 'تصميم ملكي فريد مطلي بماء الذهب عيار 24 مع أقمشة مخملية فاخرة.'
+            }
+        ];
+
+        function renderProducts(products) {
+            const grid = document.getElementById('gallery-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            products.forEach(p => {
+                let mediaTag = `<img src="${p.mediaUrl}" style="width: 100%; height: 220px; object-fit: cover;">`;
+                if (p.mediaType && p.mediaType.includes('video')) {
+                    mediaTag = `<video src="${p.mediaUrl}" controls style="width: 100%; height: 220px; object-fit: cover;"></video>`;
+                }
+                grid.innerHTML += `
+                    <div class="glass-panel" style="overflow: hidden; padding: 0;">
+                        ${mediaTag}
+                        <div style="padding: 15px;">
+                            <span class="gold-text" style="font-size: 11px;">${p.category || ''}</span>
+                            <h3 style="font-family: 'Amiri'; font-size: 18px; margin: 5px 0; color: #fff;">${p.title}</h3>
+                            <p style="color: #aaa; font-size: 12px; margin-bottom: 10px;">${p.description || ''}</p>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span class="gold-text" style="font-weight: bold;">${p.price}</span>
+                                <a href="#contact" class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;">طلب تفصيل</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        renderProducts(defaultProducts);
+
+        function loadProducts() {
+            db.ref('products').on('value', snapshot => {
+                const data = snapshot.val();
+                if (data) {
+                    const products = Object.keys(data).map(k => ({ id: k, ...data[k] }));
+                    renderProducts(products);
+                }
+            });
+        }
+
+        function loadSettings() {
+            db.ref('settings').on('value', snapshot => {
+                const s = snapshot.val();
+                if (s) {
+                    if (s.phone && document.getElementById('top-phone')) document.getElementById('top-phone').innerText = s.phone;
+                    if (s.location && document.getElementById('top-loc')) document.getElementById('top-loc').innerText = s.location;
+                    if (s.fb && document.getElementById('link-fb')) document.getElementById('link-fb').href = s.fb;
+                    if (s.insta && document.getElementById('link-insta')) document.getElementById('link-insta').href = s.insta;
+                    if (s.tiktok && document.getElementById('link-tiktok')) document.getElementById('link-tiktok').href = s.tiktok;
+
+                    if (document.getElementById('set-phone')) document.getElementById('set-phone').value = s.phone || '';
+                    if (document.getElementById('set-loc')) document.getElementById('set-loc').value = s.location || '';
+                    if (document.getElementById('set-fb')) document.getElementById('set-fb').value = s.fb || '';
+                    if (document.getElementById('set-insta')) document.getElementById('set-insta').value = s.insta || '';
+                    if (document.getElementById('set-tiktok')) document.getElementById('set-tiktok').value = s.tiktok || '';
+                }
+            });
+        }
+
+        // تسجيل الدخول
+        window.handleAdminLogin = function(e) {
+            e.preventDefault();
+            const email = document.getElementById('admin-email').value;
+            const pass = document.getElementById('admin-pass').value;
+
+            auth.signInWithEmailAndPassword(email, pass).then(() => {
+                closeAdminLogin();
+                const d = document.getElementById('admin-dashboard-modal');
+                if (d) d.style.display = 'flex';
+            }).catch(err => {
+                alert('خطأ في البيانات! تأكد من البريد وكلمة المرور.');
+            });
+        };
+
+        // إضافة معروض جديد (صور وفيديوهات مع معالجة ذكية)
+        window.addNewProduct = function(e) {
+            e.preventDefault();
+            const title = document.getElementById('p-title').value;
+            const category = document.getElementById('p-cat').value;
+            const price = document.getElementById('p-price').value;
+            const description = document.getElementById('p-desc').value;
+            const fileInput = document.getElementById('p-file');
+            const uploadBtn = document.getElementById('upload-btn');
+
+            if (!fileInput.files || !fileInput.files[0]) {
+                alert('الرجاء اختيار ملف (صورة أو فيديو)');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            uploadBtn.innerText = 'جاري المعالجة والحفظ...';
+            uploadBtn.disabled = true;
+
+            const reader = new FileReader();
+
+            if (file.type.startsWith('image/')) {
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const MAX_WIDTH = 500;
+                        const MAX_HEIGHT = 500;
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                        } else {
+                            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                        saveProductToDB(title, category, price, description, compressedDataUrl, 'image', uploadBtn);
+                    };
+                };
+                reader.readAsDataURL(file);
+            } else if (file.type.startsWith('video/')) {
+                if (file.size > 3 * 1024 * 1024) {
+                    alert('حجم الفيديو كبير جداً. يرجى اختيار فيديو أصغر من 3 ميجابايت.');
+                    uploadBtn.innerText = 'حفظ وإضافة';
+                    uploadBtn.disabled = false;
+                    return;
+                }
+                reader.onload = function(event) {
+                    saveProductToDB(title, category, price, description, event.target.result, 'video', uploadBtn);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('نوع الملف غير مدعوم.');
+                uploadBtn.innerText = 'حفظ وإضافة';
+                uploadBtn.disabled = false;
+            }
+        };
+
+        function saveProductToDB(title, category, price, description, mediaUrl, mediaType, uploadBtn) {
+            db.ref('products').push({
+                title, category, price, description, mediaUrl, mediaType
+            }, (error) => {
+                if (error) {
+                    alert('حدث خطأ أثناء الحفظ: ' + error.message);
+                } else {
+                    alert('تم إضافة وحفظ المعروض بنجاح!');
+                    document.getElementById('p-title').value = '';
+                    document.getElementById('p-price').value = '';
+                    document.getElementById('p-desc').value = '';
+                    document.getElementById('p-file').value = '';
+                    closeAdminDashboard();
+                }
+                uploadBtn.innerText = 'حفظ وإضافة';
+                uploadBtn.disabled = false;
+            });
+        }
+
+        window.saveSiteSettings = function(e) {
+            e.preventDefault();
+            const phone = document.getElementById('set-phone').value;
+            const location = document.getElementById('set-loc').value;
+            const fb = document.getElementById('set-fb').value;
+            const insta = document.getElementById('set-insta').value;
+            const tiktok = document.getElementById('set-tiktok').value;
+
+            db.ref('settings').set({ phone, location, fb, insta, tiktok }, () => {
+                alert('تم تحديث إعدادات الموقع بنجاح!');
+                closeAdminDashboard();
+            });
+        };
+
+        window.submitCustomerInquiry = function(e) {
+            e.preventDefault();
+            const name = document.getElementById('inquiry-name').value;
+            const phone = document.getElementById('inquiry-phone').value;
+            const message = document.getElementById('inquiry-message').value;
+
+            db.ref('inquiries').push({ name, phone, message, date: new Date().toLocaleString() }, () => {
+                alert('تم إرسال طلبك بنجاح!');
+                document.getElementById('inquiry-name').value = '';
+                document.getElementById('inquiry-phone').value = '';
+                document.getElementById('inquiry-message').value = '';
+            });
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+            loadSettings();
+        });
+    </script>
+</body>
+</html>

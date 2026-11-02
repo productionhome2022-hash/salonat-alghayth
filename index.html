@@ -139,6 +139,14 @@
         </div>
     </section>
 
+    <!-- Footer Copyrights Section -->
+    <footer style="background: #000; border-top: 1px solid rgba(212,175,55,0.2); padding: 25px 15px; text-align: center; margin-top: 40px;">
+        <p style="color: #888; font-size: 13px; line-height: 1.8;">
+            تم التصميم وصناعة الموقع بواسطة <span class="gold-text" style="font-weight: bold;">production home 2022</span><br>
+            وجميع الحقوق القانونية والبرمجية خاصة به © 2026
+        </p>
+    </footer>
+
     <!-- Admin Login Modal -->
     <div id="admin-login-modal" class="modal">
         <div class="glass-panel" style="max-width: 380px; width: 100%; position: relative;">
@@ -201,7 +209,7 @@
                 </div>
             </div>
 
-            <!-- Tab 4: Settings (Updated with WhatsApp) -->
+            <!-- Tab 4: Settings -->
             <div id="tab-content-settings" style="display: none;">
                 <form onsubmit="saveSiteSettings(event)">
                     <input type="text" id="set-phone" placeholder="رقم الهاتف الأساسي">
@@ -397,7 +405,6 @@
                     if (s.phone && document.getElementById('top-phone')) document.getElementById('top-phone').innerText = s.phone;
                     if (s.location && document.getElementById('top-loc')) document.getElementById('top-loc').innerText = s.location;
                     
-                    // WhatsApp
                     const waEl = document.getElementById('link-whatsapp');
                     if (s.whatsapp && waEl) {
                         waEl.href = s.whatsapp.startsWith('http') ? s.whatsapp : 'https://wa.me/' + s.whatsapp;
@@ -406,7 +413,6 @@
                         waEl.style.display = 'none';
                     }
 
-                    // Facebook
                     const fbEl = document.getElementById('link-fb');
                     if (s.fb && fbEl) {
                         fbEl.href = s.fb;
@@ -415,7 +421,6 @@
                         fbEl.style.display = 'none';
                     }
 
-                    // Instagram
                     const instaEl = document.getElementById('link-insta');
                     if (s.insta && instaEl) {
                         instaEl.href = s.insta;
@@ -424,7 +429,6 @@
                         instaEl.style.display = 'none';
                     }
 
-                    // TikTok
                     const tiktokEl = document.getElementById('link-tiktok');
                     if (s.tiktok && tiktokEl) {
                         tiktokEl.href = s.tiktok;
@@ -433,7 +437,6 @@
                         tiktokEl.style.display = 'none';
                     }
 
-                    // تعبئة حقول الإعدادات داخل لوحة التحكم
                     if (document.getElementById('set-phone')) document.getElementById('set-phone').value = s.phone || '';
                     if (document.getElementById('set-whatsapp')) document.getElementById('set-whatsapp').value = s.whatsapp || '';
                     if (document.getElementById('set-loc')) document.getElementById('set-loc').value = s.location || '';

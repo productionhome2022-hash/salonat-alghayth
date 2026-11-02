@@ -59,9 +59,13 @@
             position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; overflow-y: auto;
         }
         .tab-btn {
-            padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(212,175,55,0.4); background: #111; color: #d4af37; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; font-size: 13px;
+            padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(212,175,55,0.4); background: #111; color: #d4af37; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; font-size: 12px;
         }
         .tab-btn.active { background: #d4af37; color: #000; }
+        .gallery-media {
+            width: 100%; height: 220px; object-fit: cover; cursor: pointer; transition: 0.3s;
+        }
+        .gallery-media:hover { opacity: 0.9; }
     </style>
 </head>
 <body>
@@ -113,6 +117,14 @@
         <div id="gallery-grid" class="grid"></div>
     </section>
 
+    <!-- Fullscreen Media Modal (لعرض الصورة/الفيديو بشكل كامل عند الضغط عليها) -->
+    <div id="media-viewer-modal" class="modal" onclick="closeMediaViewer()">
+        <div style="position: relative; max-width: 90%; max-height: 90%; text-align: center;" onclick="event.stopPropagation()">
+            <button type="button" onclick="closeMediaViewer()" style="position: absolute; top: -40px; left: 0; background: none; border: none; color: #d4af37; font-size: 24px; cursor: pointer;"><i class="fas fa-times"></i> إغلاق</button>
+            <div id="viewer-container"></div>
+        </div>
+    </div>
+
     <!-- Contact Section -->
     <section id="contact" style="padding: 40px 15px; max-width: 600px; margin: 0 auto;">
         <div class="glass-panel">
@@ -148,13 +160,14 @@
             </div>
 
             <!-- Tabs -->
-            <div style="display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 6px; margin-bottom: 15px; flex-wrap: wrap;">
                 <button type="button" onclick="switchTab('products')" id="tab-btn-products" class="tab-btn active">إضافة معروض</button>
-                <button type="button" onclick="switchTab('inquiries')" id="tab-btn-inquiries" class="tab-btn">طلبات الزبائن (<span id="inquiry-count">0</span>)</button>
+                <button type="button" onclick="switchTab('manage')" id="tab-btn-manage" class="tab-btn">إدارة وحذف المنتجات</button>
+                <button type="button" onclick="switchTab('inquiries')" id="tab-btn-inquiries" class="tab-btn">الطلبات (<span id="inquiry-count">0</span>)</button>
                 <button type="button" onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn">إعدادات الموقع</button>
             </div>
 
-            <!-- Tab 1: Products -->
+            <!-- Tab 1: Products Addition -->
             <div id="tab-content-products">
                 <form onsubmit="addNewProduct(event)">
                     <input type="text" id="p-title" required placeholder="عنوان المعروض">
@@ -171,15 +184,23 @@
                 </form>
             </div>
 
-            <!-- Tab 2: Inquiries (New) -->
+            <!-- Tab 2: Manage & Delete Products (New) -->
+            <div id="tab-content-manage" style="display: none; max-height: 400px; overflow-y: auto;">
+                <h3 class="gold-text" style="font-family: 'Amiri'; margin-bottom: 10px; font-size: 16px;">حذف أو تعديل المعروضات الحالية</h3>
+                <div id="manage-products-list" style="display: flex; flex-direction: column; gap: 10px;">
+                    <p style="color: #888; text-align: center; padding: 20px;">جاري تحميل المنتجات...</p>
+                </div>
+            </div>
+
+            <!-- Tab 3: Inquiries -->
             <div id="tab-content-inquiries" style="display: none; max-height: 400px; overflow-y: auto;">
                 <h3 class="gold-text" style="font-family: 'Amiri'; margin-bottom: 10px; font-size: 16px;">رسائل وطلبات الزبائن الواردة</h3>
-                <div id="inquiries-list" style="display: flex; flexDirection: column; gap: 12px;">
+                <div id="inquiries-list" style="display: flex; flex-direction: column; gap: 12px;">
                     <p style="color: #888; text-align: center; padding: 20px;">جاري تحميل الطلبات...</p>
                 </div>
             </div>
 
-            <!-- Tab 3: Settings -->
+            <!-- Tab 4: Settings -->
             <div id="tab-content-settings" style="display: none;">
                 <form onsubmit="saveSiteSettings(event)">
                     <input type="text" id="set-phone" placeholder="رقم الهاتف الأساسي">
@@ -210,27 +231,54 @@
             if (modal) modal.style.display = 'none';
         };
 
+        window.openMediaViewer = function(url, type) {
+            const modal = document.getElementById('media-viewer-modal');
+            const container = document.getElementById('viewer-container');
+            if (!modal || !container) return;
+
+            if (type === 'video') {
+                container.innerHTML = `<video src="${url}" controls autoplay style="max-width: 100%; max-height: 80vh; border-radius: 8px;"></video>`;
+            } else {
+                container.innerHTML = `<img src="${url}" style="max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: 8px;">`;
+            }
+            modal.style.display = 'flex';
+        };
+
+        window.closeMediaViewer = function() {
+            const modal = document.getElementById('media-viewer-modal');
+            const container = document.getElementById('viewer-container');
+            if (modal) modal.style.display = 'none';
+            if (container) container.innerHTML = '';
+        };
+
         window.switchTab = function(tab) {
             const pC = document.getElementById('tab-content-products');
+            const mC = document.getElementById('tab-content-manage');
             const iC = document.getElementById('tab-content-inquiries');
             const sC = document.getElementById('tab-content-settings');
             
             const pB = document.getElementById('tab-btn-products');
+            const mB = document.getElementById('tab-btn-manage');
             const iB = document.getElementById('tab-btn-inquiries');
             const sB = document.getElementById('tab-btn-settings');
             
-            if (!pC || !iC || !sC) return;
+            if (!pC || !mC || !iC || !sC) return;
 
             pC.style.display = 'none';
+            mC.style.display = 'none';
             iC.style.display = 'none';
             sC.style.display = 'none';
             if (pB) pB.classList.remove('active');
+            if (mB) mB.classList.remove('active');
             if (iB) iB.classList.remove('active');
             if (sB) sB.classList.remove('active');
 
             if (tab === 'products') {
                 pC.style.display = 'block';
                 if (pB) pB.classList.add('active');
+            } else if (tab === 'manage') {
+                mC.style.display = 'block';
+                if (mB) mB.classList.add('active');
             } else if (tab === 'inquiries') {
                 iC.style.display = 'block';
                 if (iB) iB.classList.add('active');
@@ -266,14 +314,18 @@
             }
         ];
 
+        let globalProducts = [];
+
         function renderProducts(products) {
+            globalProducts = products;
             const grid = document.getElementById('gallery-grid');
             if (!grid) return;
             grid.innerHTML = '';
             products.forEach(p => {
-                let mediaTag = `<img src="${p.mediaUrl}" style="width: 100%; height: 220px; object-fit: cover;">`;
-                if (p.mediaType && p.mediaType.includes('video')) {
-                    mediaTag = `<video src="${p.mediaUrl}" controls style="width: 100%; height: 220px; object-fit: cover;"></video>`;
+                let mediaTypeVal = p.mediaType || 'image';
+                let mediaTag = `<img src="${p.mediaUrl}" class="gallery-media" onclick="openMediaViewer('${p.mediaUrl}', '${mediaTypeVal}')">`;
+                if (mediaTypeVal.includes('video')) {
+                    mediaTag = `<video src="${p.mediaUrl}" class="gallery-media" onclick="openMediaViewer('${p.mediaUrl}', 'video')"></video>`;
                 }
                 grid.innerHTML += `
                     <div class="glass-panel" style="overflow: hidden; padding: 0;">
@@ -290,9 +342,43 @@
                     </div>
                 `;
             });
+            renderManageProducts(products);
         }
 
-        renderProducts(defaultProducts);
+        // عرض المنتجات داخل لوحة التحكم لتمكين حذفها
+        function renderManageProducts(products) {
+            const container = document.getElementById('manage-products-list');
+            if (!container) return;
+            container.innerHTML = '';
+            if (!products || products.length === 0) {
+                container.innerHTML = '<p style="color: #888; text-align: center; padding: 20px;">لا توجد منتجات مضافة.</p>';
+                return;
+            }
+            products.forEach(p => {
+                container.innerHTML += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.6); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px; padding: 10px 15px; margin-bottom: 8px;">
+                        <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+                            <img src="${p.mediaUrl}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                            <div>
+                                <h4 style="font-size: 14px; color: #fff; font-family: 'Amiri';">${p.title}</h4>
+                                <span class="gold-text" style="font-size: 11px;">${p.price}</span>
+                            </div>
+                        </div>
+                        <button type="button" onclick="deleteProduct('${p.id}')" class="btn" style="background: #a91e1e; color: #fff; padding: 5px 10px; font-size: 11px; border: none;"><i class="fas fa-trash"></i> حذف</button>
+                    </div>
+                `;
+            });
+        }
+
+        window.deleteProduct = function(id) {
+            if (confirm('هل أنت متأكد من حذف هذا المعروض نهائياً؟')) {
+                db.ref('products/' + id).remove().then(() => {
+                    alert('تم حذف المعروض بنجاح!');
+                }).catch(err => {
+                    alert('خطأ أثناء الحذف: ' + err.message);
+                });
+            }
+        };
 
         function loadProducts() {
             db.ref('products').on('value', snapshot => {
@@ -300,6 +386,8 @@
                 if (data) {
                     const products = Object.keys(data).map(k => ({ id: k, ...data[k] }));
                     renderProducts(products);
+                } else {
+                    renderProducts(defaultProducts);
                 }
             });
         }
@@ -323,7 +411,6 @@
             });
         }
 
-        // تحميل وعرض طلبات الزبائن في لوحة التحكم
         function loadInquiries() {
             db.ref('inquiries').on('value', snapshot => {
                 const data = snapshot.val();
@@ -343,7 +430,6 @@
 
                 keys.reverse().forEach(k => {
                     const req = data[k];
-                    // زر مباشر لمراسلة الزبون عبر واتساب
                     const cleanPhone = req.phone ? req.phone.replace(/[^0-9+]/g, '') : '';
                     container.innerHTML += `
                         <div style="background: rgba(0,0,0,0.6); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px; padding: 12px; margin-bottom: 10px;">
@@ -401,8 +487,8 @@
                     img.onload = function() {
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
-                        const MAX_WIDTH = 400;
-                        const MAX_HEIGHT = 400;
+                        const MAX_WIDTH = 600;
+                        const MAX_HEIGHT = 600;
                         let width = img.width;
                         let height = img.height;
 
@@ -416,7 +502,7 @@
                         canvas.height = height;
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.5);
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
                         saveProductToDB(title, category, price, description, compressedDataUrl, 'image', uploadBtn);
                     };
                 };

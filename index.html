@@ -59,7 +59,7 @@
             position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; overflow-y: auto;
         }
         .tab-btn {
-            padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(212,175,55,0.4); background: #111; color: #d4af37; cursor: pointer; font-weight: bold; font-family: 'Tajawal';
+            padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(212,175,55,0.4); background: #111; color: #d4af37; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; font-size: 13px;
         }
         .tab-btn.active { background: #d4af37; color: #000; }
     </style>
@@ -141,15 +141,16 @@
 
     <!-- Admin Dashboard Modal -->
     <div id="admin-dashboard-modal" class="modal">
-        <div class="glass-panel" style="max-width: 700px; width: 100%; margin: 20px auto;">
+        <div class="glass-panel" style="max-width: 750px; width: 100%; margin: 20px auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 10px; margin-bottom: 15px;">
                 <h2 class="gold-text" style="font-family: 'Amiri'; font-size: 18px;">لوحة تحكم المنصة</h2>
                 <button type="button" onclick="closeAdminDashboard()" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px;">إغلاق</button>
             </div>
 
             <!-- Tabs -->
-            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <div style="display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;">
                 <button type="button" onclick="switchTab('products')" id="tab-btn-products" class="tab-btn active">إضافة معروض</button>
+                <button type="button" onclick="switchTab('inquiries')" id="tab-btn-inquiries" class="tab-btn">طلبات الزبائن (<span id="inquiry-count">0</span>)</button>
                 <button type="button" onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn">إعدادات الموقع</button>
             </div>
 
@@ -170,7 +171,15 @@
                 </form>
             </div>
 
-            <!-- Tab 2: Settings -->
+            <!-- Tab 2: Inquiries (New) -->
+            <div id="tab-content-inquiries" style="display: none; max-height: 400px; overflow-y: auto;">
+                <h3 class="gold-text" style="font-family: 'Amiri'; margin-bottom: 10px; font-size: 16px;">رسائل وطلبات الزبائن الواردة</h3>
+                <div id="inquiries-list" style="display: flex; flexDirection: column; gap: 12px;">
+                    <p style="color: #888; text-align: center; padding: 20px;">جاري تحميل الطلبات...</p>
+                </div>
+            </div>
+
+            <!-- Tab 3: Settings -->
             <div id="tab-content-settings" style="display: none;">
                 <form onsubmit="saveSiteSettings(event)">
                     <input type="text" id="set-phone" placeholder="رقم الهاتف الأساسي">
@@ -203,21 +212,31 @@
 
         window.switchTab = function(tab) {
             const pC = document.getElementById('tab-content-products');
+            const iC = document.getElementById('tab-content-inquiries');
             const sC = document.getElementById('tab-content-settings');
+            
             const pB = document.getElementById('tab-btn-products');
+            const iB = document.getElementById('tab-btn-inquiries');
             const sB = document.getElementById('tab-btn-settings');
-            if (!pC || !sC) return;
+            
+            if (!pC || !iC || !sC) return;
+
+            pC.style.display = 'none';
+            iC.style.display = 'none';
+            sC.style.display = 'none';
+            if (pB) pB.classList.remove('active');
+            if (iB) iB.classList.remove('active');
+            if (sB) sB.classList.remove('active');
 
             if (tab === 'products') {
                 pC.style.display = 'block';
-                sC.style.display = 'none';
                 if (pB) pB.classList.add('active');
-                if (sB) sB.classList.remove('active');
-            } else {
-                pC.style.display = 'none';
+            } else if (tab === 'inquiries') {
+                iC.style.display = 'block';
+                if (iB) iB.classList.add('active');
+            } else if (tab === 'settings') {
                 sC.style.display = 'block';
                 if (sB) sB.classList.add('active');
-                if (pB) pB.classList.remove('active');
             }
         };
 
@@ -282,8 +301,6 @@
                     const products = Object.keys(data).map(k => ({ id: k, ...data[k] }));
                     renderProducts(products);
                 }
-            }, error => {
-                console.error("Error loading products:", error);
             });
         }
 
@@ -303,8 +320,43 @@
                     if (document.getElementById('set-insta')) document.getElementById('set-insta').value = s.insta || '';
                     if (document.getElementById('set-tiktok')) document.getElementById('set-tiktok').value = s.tiktok || '';
                 }
-            }, error => {
-                console.error("Error loading settings:", error);
+            });
+        }
+
+        // تحميل وعرض طلبات الزبائن في لوحة التحكم
+        function loadInquiries() {
+            db.ref('inquiries').on('value', snapshot => {
+                const data = snapshot.val();
+                const container = document.getElementById('inquiries-list');
+                const countBadge = document.getElementById('inquiry-count');
+                if (!container) return;
+
+                container.innerHTML = '';
+                if (!data) {
+                    container.innerHTML = '<p style="color: #888; text-align: center; padding: 20px;">لا توجد طلبات أو استفسارات حالياً.</p>';
+                    if (countBadge) countBadge.innerText = '0';
+                    return;
+                }
+
+                const keys = Object.keys(data);
+                if (countBadge) countBadge.innerText = keys.length;
+
+                keys.reverse().forEach(k => {
+                    const req = data[k];
+                    // زر مباشر لمراسلة الزبون عبر واتساب
+                    const cleanPhone = req.phone ? req.phone.replace(/[^0-9+]/g, '') : '';
+                    container.innerHTML += `
+                        <div style="background: rgba(0,0,0,0.6); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px; padding: 12px; margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px;">
+                                <span class="gold-text" style="font-weight: bold;">${req.name}</span>
+                                <span style="color: #888; font-size: 11px;">${req.date || ''}</span>
+                            </div>
+                            <p style="font-size: 13px; color: #ddd; margin-bottom: 8px;"><b>الهاتف:</b> ${req.phone}</p>
+                            <p style="font-size: 13px; color: #fff; background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; margin-bottom: 10px;"><b>الطلب:</b> ${req.message}</p>
+                            <a href="https://wa.me/${cleanPhone}?text=مرحباً بك يا ${encodeURIComponent(req.name)}، بخصوص طلبك في صالونات الغيث الملكي:" target="_blank" class="btn btn-gold" style="padding: 6px 12px; font-size: 11px; text-align: center; display: block;">الرد عبر واتساب</a>
+                        </div>
+                    `;
+                });
             });
         }
 
@@ -318,7 +370,7 @@
                 const d = document.getElementById('admin-dashboard-modal');
                 if (d) d.style.display = 'flex';
             }).catch(err => {
-                alert('خطأ في البيانات أو الصلاحيات: ' + err.message);
+                alert('خطأ في البيانات: ' + err.message);
             });
         };
 
@@ -431,7 +483,7 @@
             const message = document.getElementById('inquiry-message').value;
 
             db.ref('inquiries').push({ name, phone, message, date: new Date().toLocaleString() }, () => {
-                alert('تم إرسال طلبك بنجاح!');
+                alert('تم إرسال طلبك بنجاح! سيتم مراجعته من قبل الإدارة.');
                 document.getElementById('inquiry-name').value = '';
                 document.getElementById('inquiry-phone').value = '';
                 document.getElementById('inquiry-message').value = '';
@@ -441,6 +493,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             loadProducts();
             loadSettings();
+            loadInquiries();
         });
     </script>
 </body>
